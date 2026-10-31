@@ -36,16 +36,17 @@ flowchart LR
 - **Inventory** 先盘点仓库事实和工程缺口。
 - **Scaffold** 通过 preview-first Bootstrap 安全补齐入口。
 - **Repository Harness** 是持久留在目标仓库里的工程环境。
-- **Capability Skills** 负责专业证据与治理制品。
+- **Capability Skills** 负责架构分析、专业证据与治理工作流，不把每项任务都变成文档。
 
 `Workflow` 描述某一项能力如何运行；RepoFoundry 提供承载、组合和验证这些流程的
 系统。
 
-## 七个 Skill 通过清晰边界协作
+## 八个 Skill 通过清晰边界协作
 
 | Skill | 职责 | 持久制品 |
 |---|---|---|
 | [`repo-foundry-ai`](./SKILL.md) | 盘点、Bootstrap、同步 Specs、验证 Harness、路由工作 | `AGENTS.md`、架构与文档地图、Harness 与 Spec manifests |
+| [`architecture-design`](./architecture-design/SKILL.md) | 从需求与真实代码进行架构设计和审计：复杂度归属、深模块、信息隐藏与变化传播 | 有证据的方案对比、评审发现、可证伪变化场景；不强制写文档或创建 DD |
 | [`detailed-design`](./detailed-design/SKILL.md) | 从仓库证据协作撰写和评审 Architecture、Internals、模块设计与实现合同 | 默认一份聚焦 Markdown；不创建 DD 治理制品 |
 | [`engineering-benchmark`](./engineering-benchmark/SKILL.md) | 共同校准并执行可复现测量 | Suite、Scenario、Run、Result、sealed Evidence Manifest |
 | [`engineering-research`](./engineering-research/SKILL.md) | 共同引导未知并综合多文档证据 | Research controller、corpus Manifest、Rounds、topics、sealed Synthesis |
@@ -53,7 +54,7 @@ flowchart LR
 | [`engineering-execution-plan`](./engineering-execution-plan/SKILL.md) | 共同权衡 ADR 并校准受治理实施 | ADR、ExecPlan、Task、Checkpoint、Bugfix、技术债务 |
 | [`engineering-case-study`](./engineering-case-study/SKILL.md) | 把已验证代码和过程证据写成可分享内容 | 中文、英文或中英双语工程案例 |
 
-六个专业 Skill 可以独立安装。它们通过版本化仓库文件交接，不依赖私有运行时
+七个专业 Skill 可以独立安装。它们通过版本化仓库文件交接，不依赖私有运行时
 导入。
 
 这些治理制品还共享一层语义元数据：稳定 type/ID、title/status、author/owner 与

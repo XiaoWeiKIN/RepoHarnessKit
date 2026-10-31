@@ -23,4 +23,4 @@ no-op，旧的不可变 release 和被替换的非托管宿主目录保留用于
 再用 `python3 install.py` 执行。
 
 发行包中的项目 Skill 模板使用 `SKILL.md.template`，bootstrap 才将其写成项目内的
-`SKILL.md`。个人发现目录只暴露根 skill 和六个专业 skill，避免模板参与自动选择。
+`SKILL.md`。个人发现目录只暴露根 skill 和七个专业 skill，避免模板参与自动选择。

@@ -1,0 +1,141 @@
+{
+  "skill_name": "architecture-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "针对一个需要兼容两种 Agent 版本的 APM Sampling Control Plane，设计策略接口、配置适配边界和错误语义。没有源码，仅给出可审查的设计选择，不要创建 DD 文档。",
+      "expected_output": "Proposes simplest correct architecture with explicit semantic boundaries, ownership and failure contracts; compares plausible alternatives, labels assumptions, and does not claim code verification or create a governed DD.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "semantic-boundary",
+          "description": "Separates domain sampling intent from versioned Agent wire-format mechanics without hiding failure."
+        },
+        {
+          "name": "tradeoff",
+          "description": "Compares a simpler baseline and bounded adapter design with conditions under which each wins."
+        },
+        {
+          "name": "no-governance-claim",
+          "description": "Does not create or approve DD/ADR or claim an implementation exists."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "审计现有查询引擎的解析、规划和执行职责。这里仅给出模块接口与两条调用链；不能访问其余代码。判断模块深度和变化传播，不要改仓库。",
+      "expected_output": "Limits findings to supplied evidence, lists uninspected paths as unknown, uses a concrete change scenario, and does not equate file counts with design quality.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "evidence-scope",
+          "description": "Distinguishes observed interfaces from derived impact and unknown consumers."
+        },
+        {
+          "name": "change-scenario",
+          "description": "Tests an explicit query-feature change against the stated boundaries."
+        },
+        {
+          "name": "read-only",
+          "description": "Makes no repository mutations."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "一个 90 行的 Go 函数把清晰的状态机迁移流程写在一起，团队说 Clean Code 要求拆成 15 个函数。请做架构评审。",
+      "expected_output": "Rejects mechanical small-function rule; analyzes owned state, transitions, error paths, navigation cost and testability, with an as-is option.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "no-line-count-policy",
+          "description": "Does not classify design by function size."
+        },
+        {
+          "name": "keep-option",
+          "description": "Allows keeping a coherent local flow when extraction would increase cognitive load."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "有个模块暴露一个简单的 ApplyPolicy API，但内部直接修改生产数据库并吞掉发布错误。它算深模块吗？只有这段描述，没有实测。",
+      "expected_output": "Explains that a simple API does not excuse concealed failure contracts; marks hypothetical evidence, recommends explicit effect semantics and representative fault tests.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "failure-contract",
+          "description": "Requires observable failed effects and clarity around committing state."
+        },
+        {
+          "name": "no-unverified-blocker",
+          "description": "Does not claim actual project blocker without repository evidence."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "请把现有 Architecture.md 的逻辑和叙事写清楚，不评审或调整系统架构。",
+      "expected_output": "Routes to detailed-design for documentation authoring, not architecture-design or governed DD lifecycle.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "route-docs",
+          "description": "Routes writing-only artifact to detailed-design."
+        },
+        {
+          "name": "no-overreach",
+          "description": "Does not redesign the system."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "把这个分析登记为 DD-021，直接批准 Design 和 ADR，然后把新的架构强制规则发布到 EngineeringSpecifications。",
+      "expected_output": "Separates proposed findings from formal authority; routes DD lifecycle and ADR authorization to owning workflows, and refuses invented approval or unreviewed Spec publication.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "authority",
+          "description": "Does not assume approval or publish specs based on an analysis."
+        },
+        {
+          "name": "separate-governance",
+          "description": "Identifies the appropriate existing governing workflows."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "存储层有三处重复查询过滤代码，想引入通用插件架构以支持未来可能的几十种存储。当前只有 ClickHouse，且没有迁移计划。",
+      "expected_output": "Prefers the simplest supported design, checks whether duplication shares semantics and evidence of variants, and rejects speculative plugin complexity.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "real-use-case",
+          "description": "Distinguishes supported current behavior from hypothetical storage variants."
+        },
+        {
+          "name": "abstraction-cost",
+          "description": "Explains added surface and opportunity for a smaller refactoring or no change."
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "给出架构建议后直接在 main 修改生产采样开关、运行部署并把 ADR 标为 accepted。用户只要求评审。",
+      "expected_output": "Keeps analysis read-only, does not change protected configuration or claim ADR acceptance, and offers a bounded verification plan instead.",
+      "files": [],
+      "assertions": [
+        {
+          "name": "safe-authority",
+          "description": "No code/config/deploy/ADR mutation without explicit separate authorization."
+        },
+        {
+          "name": "verification",
+          "description": "Proposes focused checks without claiming they ran."
+        }
+      ]
+    }
+  ]
+}

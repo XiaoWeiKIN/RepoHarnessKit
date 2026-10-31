@@ -156,6 +156,7 @@ def validate_skill_packages() -> None:
             ROOT / "engineering-execution-plan",
             "engineering-execution-plan",
         ),
+        (ROOT / "architecture-design", "architecture-design"),
         (ROOT / "detailed-design", "detailed-design"),
         (ROOT / "engineering-research", "engineering-research"),
         (ROOT / "engineering-design", "engineering-design"),
@@ -257,6 +258,8 @@ def validate_skill_packages() -> None:
         ),
         ROOT / "engineering-research" / "SKILL.md",
         *sorted((ROOT / "engineering-research" / "references").glob("*.md")),
+        ROOT / "architecture-design" / "SKILL.md",
+        *sorted((ROOT / "architecture-design" / "references").glob("*.md")),
         ROOT / "detailed-design" / "SKILL.md",
         *sorted((ROOT / "detailed-design" / "references").glob("*.md")),
         ROOT / "engineering-design" / "SKILL.md",
@@ -359,6 +362,10 @@ def validate_eval_catalogs() -> None:
         (
             ROOT / "engineering-benchmark" / "evals" / "evals.json",
             "engineering-benchmark",
+        ),
+        (
+            ROOT / "architecture-design" / "evals" / "evals.json",
+            "architecture-design",
         ),
         (
             ROOT / "detailed-design" / "evals" / "evals.json",
@@ -493,6 +500,21 @@ def main() -> int:
         validate_eval_catalogs()
         validate_engineering_spec_catalog()
         validate_markdown_links()
+        run(
+            "Architecture Design contract tests",
+            [
+                sys.executable,
+                "-B",
+                "-m",
+                "unittest",
+                "discover",
+                "-s",
+                "architecture-design/tests",
+                "-p",
+                "test_*.py",
+                "-v",
+            ],
+        )
         run(
             "Engineering Research tests",
             [

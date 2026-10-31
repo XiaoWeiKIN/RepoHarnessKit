@@ -464,6 +464,14 @@ def validate_package(root: Path, expected_version: str | None = None) -> str:
         Path("engineering-case-study/SKILL.md"),
     )
     package_files(root)
+    # Older pinned releases predate this optional professional capability.
+    # If a distribution includes it, validate its entrypoints without
+    # making installation of historical releases incompatible.
+    if (root / "architecture-design").exists():
+        required += (
+            Path("architecture-design/SKILL.md"),
+            Path("architecture-design/agents/openai.yaml"),
+        )
     for relative in required:
         target = root / relative
         # Pinned older releases used discoverable names for their templates.
