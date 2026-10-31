@@ -40,16 +40,17 @@ flowchart LR
 - **Scaffold** performs guarded, preview-first Bootstrap.
 - **Repository Harness** is the persistent environment left in the target
   repository.
-- **Capability Skills** create specialized evidence and governance artifacts.
+- **Capability Skills** provide architecture analysis, specialized evidence and governed workflows without turning every task into a document.
 
 `Workflow` describes how an individual capability runs. RepoFoundry is the
 system that makes those workflows composable and verifiable.
 
-## Seven Skills collaborate through clear boundaries
+## Eight Skills collaborate through clear boundaries
 
 | Skill | Responsibility | Durable output |
 |---|---|---|
 | [`repo-foundry-ai`](./SKILL.md) | Inspect, Bootstrap, synchronize Specs, validate the Harness, and route work | `AGENTS.md`, architecture and docs maps, Harness and Spec manifests |
+| [`architecture-design`](./architecture-design/SKILL.md) | Design and audit real architecture boundaries, complexity ownership, deep modules and change propagation | Evidence-backed options, findings and falsifiable change scenarios; no mandatory document or DD lifecycle |
 | [`detailed-design`](./detailed-design/SKILL.md) | Co-author and review Architecture, Internals, module designs, and implementation contracts from repository evidence | One focused Markdown document by default; no DD lifecycle artifacts |
 | [`engineering-benchmark`](./engineering-benchmark/SKILL.md) | Collaboratively calibrate, then execute reproducible measurement | Suite, Scenario, Run, Result, sealed Evidence Manifest |
 | [`engineering-research`](./engineering-research/SKILL.md) | Collaboratively steer unknowns and synthesize multi-document evidence | Research controller, corpus Manifest, Rounds, topics, sealed Synthesis |
@@ -57,7 +58,7 @@ system that makes those workflows composable and verifiable.
 | [`engineering-execution-plan`](./engineering-execution-plan/SKILL.md) | Deliberate ADRs and align governed implementation | ADR, ExecPlan, Task, Checkpoint, Bugfix, technical debt |
 | [`engineering-case-study`](./engineering-case-study/SKILL.md) | Turn verified code and process evidence into a shareable narrative | Chinese, English, or bilingual engineering case study |
 
-The six professional Skills remain independently installable. They communicate
+The seven professional Skills remain independently installable. They communicate
 through versioned repository files rather than private runtime imports.
 
 Governed artifacts also share one semantic metadata layer: stable type and ID,
