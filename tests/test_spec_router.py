@@ -1435,10 +1435,10 @@ class SpecRouterTestCase(unittest.TestCase):
             "PreToolUse", tool_name="apply_patch",
             tool_input={
                 "command": (
-                    "*** Begin Patch\\n"
-                    "*** Update File: service/main.go\\n"
-                    "@@\\n"
-                    " package service\\n"
+                    "*** Begin Patch\n"
+                    "*** Update File: service/main.go\n"
+                    "@@\n"
+                    " package service\n"
                     "*** End Patch"
                 )
             },
