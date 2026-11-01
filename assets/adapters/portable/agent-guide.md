@@ -50,12 +50,35 @@ python3 .repo-foundry/engineering-specs/spec_router.py activate \
   --requirement <ID> --because "<ID>=<task-specific reason>"
 ```
 
+Before the first Build/Governed code edit, review **all applicable**
+Requirement cards for naming, common paths, control flow and tests, and
+enumerate every exact intended source/test file. With no native Hooks,
+run `rehydrate` first to deliver the exact capsule, then:
+
+```bash
+python3 .repo-foundry/engineering-specs/spec_router.py preflight \
+  --adapter-id portable --session-id <session-id> --turn-id <turn-id> \
+  --path <exact-source-file> --path <exact-test-file> \
+  [--expect-requirement <independently-identified-required-ID> ...]
+```
+
+This read-only gate checks path coverage and expected Requirement IDs; it does
+not infer semantic applicability. It refuses a pre-edit PASS once this turn
+already has changed files. No post-edit activation may backdate compliance.
+If new code introduces identifiers or new branches, review their Requirement
+cards and re-activate **before** the additional edits.
+
 This adapter provides CLI checks and advisory instructions. It does not claim
 native lifecycle interception. Use explicit whole-Spec fallback only with a
 reason; a raised capsule budget also requires `--capsule-budget-reason`. Use
 `--none --reason` when nothing applies. Run `rehydrate` after a context reset,
 re-run activation if planned paths change, run each resolved
-Requirement's Verification row, then audit the final handoff. When the
+Requirement's Verification row, then audit the final handoff. If canonical
+validation (for example, offline Go tidy) is blocked by unavailable
+dependencies, report the exact command as UNVERIFIED/incomplete and do not
+claim full CI or Compliance PASS. A no-effect Verification requires the actual
+no-write/rollback evidence when specified; pure-function tests do not replace it.
+When the
 Execution Plan control plane is initialized, resolve its Skill and run
 `epctl.py --repo . adr-maintenance` after an ADR lifecycle/storage mutation and
 before a Governed handoff; scheduled CI may add `--check`. The result is
