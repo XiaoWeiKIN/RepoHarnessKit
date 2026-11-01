@@ -1498,7 +1498,7 @@ class SpecRouterTestCase(unittest.TestCase):
             "--session-id", "session-1", "--turn-id", "turn-1",
         )
         (self.repo / "service/main.go").write_text(
-            "package service\\nfunc Fixed() {}\\n", encoding="utf-8"
+            "package service\nfunc Fixed() {}\n", encoding="utf-8"
         )
         late = json.loads(
             self.run_core(
