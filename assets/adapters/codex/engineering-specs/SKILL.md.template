@@ -100,9 +100,11 @@ evidence boundaries apply in every mode.
      [--expect-requirement <required-ID> ...]
    ```
 
-   Preflight is read-only and fails when the turn baseline already contains
-   edits. It does **not** infer applicability, prove the Agent understood the
-   capsule, or certify that a CLI-only edit was blocked. When Hooks are absent,
+   Preflight is read-only and fails while the turn's current files differ
+   from its baseline. It cannot detect edits subsequently reverted to identical
+   bytes or independently establish a historical edit timeline. It does
+   **not** infer applicability, prove Agent understanding, or certify that a
+   CLI-only edit was blocked. When Hooks are absent,
    use `rehydrate` first to deliver the exact capsule in the current epoch.
    A post-edit activation or preflight cannot repair missing pre-edit evidence.
 8. Rerun activation when paths, applicable Specs, or direct Requirements
