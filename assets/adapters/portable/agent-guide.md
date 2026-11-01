@@ -63,8 +63,9 @@ python3 .repo-foundry/engineering-specs/spec_router.py preflight \
 ```
 
 This read-only gate checks path coverage and expected Requirement IDs; it does
-not infer semantic applicability. It refuses a pre-edit PASS once this turn
-already has changed files. No post-edit activation may backdate compliance.
+not infer semantic applicability. It refuses a pre-edit PASS when current files differ from the turn
+baseline, but cannot detect reverted edits or prove historical timing.
+No post-edit activation may backdate compliance.
 If new code introduces identifiers or new branches, review their Requirement
 cards and re-activate **before** the additional edits.
 
