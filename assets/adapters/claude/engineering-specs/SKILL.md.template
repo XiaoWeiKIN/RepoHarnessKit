@@ -49,6 +49,25 @@ audit. If none applies, use `--none` with a reason. After compaction, run
 list and never summarize or truncate normative text to fit a budget. Raising
 the default capsule budget requires `--capsule-budget-reason`.
 
+Before the **first** Build/Governed edit, review all applicable
+Requirement cards for identifiers, common paths, control flow, errors and
+tests. Enumerate exact intended source/test files, not just a glob. Without
+Hooks, first `rehydrate` to deliver the exact capsule, then run:
+
+```bash
+python3 .repo-foundry/engineering-specs/spec_router.py --repo . \
+  preflight --adapter-id claude --session-id <session> --turn-id <turn> \
+  --path <exact-source> --path <exact-test> \
+  [--expect-requirement <independently-identified-ID> ...]
+```
+
+This is a read-only snapshot gate, not an applicability inference or native
+write block. An activation after editing cannot certify earlier compliance.
+Review new names and branches before later changes. If required canonical
+verification cannot run (including offline dependency failures), report
+UNVERIFIED/incomplete rather than PASS. Do not substitute source review for
+required no-effect integration evidence.
+
 Before Build/Governed completion, audit the receipt and handoff:
 
 ```bash
