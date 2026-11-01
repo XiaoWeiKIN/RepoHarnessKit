@@ -86,10 +86,31 @@ evidence boundaries apply in every mode.
      --none --reason "<why no installed Spec governs this task>"
    ```
 
-7. Rerun activation when paths, applicable Specs, or direct Requirements
-   change. After compaction or a manual context resume, run `rehydrate` with
+7. Before the **first code edit**, enumerate each exact intended source and
+   test file (a glob is not evidence that it covers an actual path). Review
+   every Requirement card against the task and planned code, including naming,
+   direct/common paths, control flow, error and test obligations. Then
+   explicitly check file coverage, current-epoch context delivery and any
+   independently identified must-include Requirements:
+
+   ```bash
+   python3 .repo-foundry/engineering-specs/spec_router.py preflight \
+     --adapter-id codex --session-id <session-id> --turn-id <turn-id> \
+     --path <exact-source-file> --path <exact-test-file> \
+     [--expect-requirement <required-ID> ...]
+   ```
+
+   Preflight is read-only and fails when the turn baseline already contains
+   edits. It does **not** infer applicability, prove the Agent understood the
+   capsule, or certify that a CLI-only edit was blocked. When Hooks are absent,
+   use `rehydrate` first to deliver the exact capsule in the current epoch.
+   A post-edit activation or preflight cannot repair missing pre-edit evidence.
+8. Rerun activation when paths, applicable Specs, or direct Requirements
+   change. Recheck new naming, branches and tests before further mutation;
+   any previous edit remains auditable against its original activation.
+   After compaction or a manual context resume, run `rehydrate` with
    the active adapter/session/turn so the next epoch receives the same capsule.
-8. Before handoff, export the source-verified enforcement context:
+9. Before handoff, export the source-verified enforcement context:
 
    ```bash
    python3 .repo-foundry/engineering-specs/spec_router.py evidence \
@@ -120,7 +141,13 @@ Compatibility or migration: none | <observable effect and plan>
 ```
 
 The handoff is an evidence index, not a substitute for tests or immutable
-artifacts.
+artifacts. A missing canonical check (including an offline dependency failure)
+is **UNVERIFIED / incomplete**, not PASS. Preflight dependency availability
+before implementation; execute declared Verification rows and canonical CI or
+record the exact blocked command, root cause and any authorized exception.
+Do not claim full Spec compliance when required checks remain incomplete.
+For no-effect requirements, a pure-function unit test or source review cannot
+substitute for required integration no-write/rollback evidence.
 
 ## Safety
 
