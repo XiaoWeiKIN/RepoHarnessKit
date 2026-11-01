@@ -1431,6 +1431,19 @@ class SpecRouterTestCase(unittest.TestCase):
         self.assertEqual(result["uncovered_paths"], [])
         self.assertTrue(result["capsule_delivered_in_current_epoch"])
         self.assertEqual(result["changed_since_begin"], [])
+        write_gate = self.hook(
+            "PreToolUse", tool_name="apply_patch",
+            tool_input={
+                "command": (
+                    "*** Begin Patch\\n"
+                    "*** Update File: service/main.go\\n"
+                    "@@\\n"
+                    " package service\\n"
+                    "*** End Patch"
+                )
+            },
+        )
+        self.assertEqual(write_gate, {})
         uncovered = json.loads(
             self.run_core(
                 "preflight", "--adapter-id", "codex",
