@@ -1412,6 +1412,120 @@ class SpecRouterTestCase(unittest.TestCase):
         )
         self.assertTrue(audit["ok"])
 
+    def test_recursive_glob_preflight_covers_zero_and_nested_directories(self) -> None:
+        self.initialize_turn()
+        self.activate_go("service/**/*.go")
+        self.run_core(
+            "rehydrate", "--adapter-id", "codex",
+            "--session-id", "session-1", "--turn-id", "turn-1",
+        )
+        result = json.loads(
+            self.run_core(
+                "preflight", "--adapter-id", "codex",
+                "--session-id", "session-1", "--turn-id", "turn-1",
+                "--path", "service/main.go",
+                "--path", "service/nested/new.go",
+            ).stdout
+        )
+        self.assertTrue(result["ok"])
+        self.assertEqual(result["uncovered_paths"], [])
+        self.assertTrue(result["capsule_delivered_in_current_epoch"])
+        self.assertEqual(result["changed_since_begin"], [])
+        write_gate = self.hook(
+            "PreToolUse", tool_name="apply_patch",
+            tool_input={
+                "command": (
+                    "*** Begin Patch\n"
+                    "*** Update File: service/main.go\n"
+                    "@@\n"
+                    " package service\n"
+                    "*** End Patch"
+                )
+            },
+        )
+        self.assertEqual(write_gate, {})
+        uncovered = json.loads(
+            self.run_core(
+                "preflight", "--adapter-id", "codex",
+                "--session-id", "session-1", "--turn-id", "turn-1",
+                "--path", "service2/main.go", expected=1,
+            ).stdout
+        )
+        self.assertIn("service2/main.go", uncovered["uncovered_paths"])
+        invalid = self.run_core(
+            "preflight", "--adapter-id", "codex",
+            "--session-id", "session-1", "--turn-id", "turn-1",
+            "--path", "service/**/*.go", expected=2,
+        )
+        self.assertIn("ROUTER_PREFLIGHT_EXACT_PATH_REQUIRED", invalid.stderr)
+
+    def test_preflight_detects_missing_requirement_even_after_capsule_delivery(self) -> None:
+        self.initialize_turn()
+        self.run_core(
+            "activate", "--adapter-id", "codex",
+            "--session-id", "session-1", "--turn-id", "turn-1",
+            "--path", "service/main.go", "--spec", "languages/go",
+            "--requirement", "GO-TEST-001",
+            "--because", "GO-TEST-001=Focused regression for this change",
+        )
+        self.run_core(
+            "rehydrate", "--adapter-id", "codex",
+            "--session-id", "session-1", "--turn-id", "turn-1",
+        )
+        missing = json.loads(
+            self.run_core(
+                "preflight", "--adapter-id", "codex",
+                "--session-id", "session-1", "--turn-id", "turn-1",
+                "--path", "service/main.go",
+                "--expect-requirement", "GO-NAME-001",
+                expected=1,
+            ).stdout
+        )
+        self.assertEqual(missing["missing_requirements"], ["GO-NAME-001"])
+        passed = json.loads(
+            self.run_core(
+                "preflight", "--adapter-id", "codex",
+                "--session-id", "session-1", "--turn-id", "turn-1",
+                "--path", "service/main.go",
+                "--expect-requirement", "GO-TEST-001",
+            ).stdout
+        )
+        self.assertTrue(passed["ok"])
+
+    def test_preflight_cannot_retroactively_certify_post_edit_activation(self) -> None:
+        self.initialize_turn()
+        self.activate_go("service/**/*.go")
+        not_yet_delivered = json.loads(
+            self.run_core(
+                "preflight", "--adapter-id", "codex",
+                "--session-id", "session-1", "--turn-id", "turn-1",
+                "--path", "service/main.go", expected=1,
+            ).stdout
+        )
+        self.assertIn(
+            "ROUTER_PREFLIGHT_CONTEXT_NOT_DELIVERED",
+            not_yet_delivered["errors"],
+        )
+        self.run_core(
+            "rehydrate", "--adapter-id", "codex",
+            "--session-id", "session-1", "--turn-id", "turn-1",
+        )
+        (self.repo / "service/main.go").write_text(
+            "package service\nfunc Fixed() {}\n", encoding="utf-8"
+        )
+        late = json.loads(
+            self.run_core(
+                "preflight", "--adapter-id", "codex",
+                "--session-id", "session-1", "--turn-id", "turn-1",
+                "--path", "service/main.go", expected=1,
+            ).stdout
+        )
+        self.assertIn("service/main.go", late["changed_since_begin"])
+        self.assertTrue(any(
+            error.startswith("ROUTER_PREFLIGHT_AFTER_EDIT")
+            for error in late["errors"]
+        ))
+
     def test_custom_hooks_are_preserved_and_report_manual_merge(self) -> None:
         custom = self.repo / ".codex/hooks.json"
         original = '{"hooks":{"Stop":[]},"description":"custom"}\n'

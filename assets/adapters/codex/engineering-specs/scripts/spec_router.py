@@ -124,6 +124,7 @@ def _is_router_command(command: str) -> bool:
             "status",
             "evidence",
             "rehydrate",
+            "preflight",
             "audit",
         }
     )
@@ -325,6 +326,7 @@ def _delegate_to_core(arguments: list[str]) -> int:
         "activate",
         "status",
         "rehydrate",
+        "preflight",
         "audit",
     }
     command_index = next(

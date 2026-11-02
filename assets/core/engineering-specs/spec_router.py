@@ -1062,9 +1062,25 @@ def load_state(root: Path) -> SpecState:
 
 
 def _matches(path: str, pattern: str) -> bool:
-    return fnmatch.fnmatchcase(path, pattern) or (
-        pattern.startswith("**/") and fnmatch.fnmatchcase(path, pattern[3:])
-    )
+    """Match bounded globs, treating a whole '**' directory as zero or more.
+
+    Keep existing fnmatch behavior for compatibility, but also try omitting
+    any complete '**/' path segment. This covers 'dir/**/*.go' matching both
+    'dir/file.go' and deeper descendants, not only leading '**/' patterns.
+    """
+    pending = [tuple(pattern.split("/"))]
+    seen: set[tuple[str, ...]] = set()
+    while pending:
+        parts = pending.pop()
+        if parts in seen:
+            continue
+        seen.add(parts)
+        if fnmatch.fnmatchcase(path, "/".join(parts)):
+            return True
+        for index, part in enumerate(parts):
+            if part == "**":
+                pending.append(parts[:index] + parts[index + 1:])
+    return False
 
 
 def candidate_entries(state: SpecState, paths: Iterable[str]) -> tuple[SpecEntry, ...]:
@@ -2226,6 +2242,86 @@ def _covered(path: str, planned: Iterable[str]) -> bool:
     return any(_matches(path, pattern) for pattern in planned)
 
 
+def command_preflight(args: argparse.Namespace) -> int:
+    """Read-only snapshot check before the first Build/Governed edit.
+
+    The caller supplies exact intended files and any independently identified
+    expected Requirements; applicability is not inferred by this command.
+    No late activation can retrospectively satisfy this before-edit check.
+    """
+    root = repository_root(args.repo)
+    runtime = _load_runtime(
+        root, args.adapter_id, args.session_id, args.turn_id
+    )
+    if runtime is None:
+        raise RouterError("ROUTER_ACTIVATION_MISSING")
+    activation = _activation(runtime)
+    _context_for_activation(root, activation)
+    paths = tuple(dict.fromkeys(
+        _normalize_planned_path(root, raw) for raw in args.path
+    ))
+    if any(any(char in path for char in "*?[]") for path in paths):
+        raise RouterError(
+            "ROUTER_PREFLIGHT_EXACT_PATH_REQUIRED: enumerate intended files"
+        )
+    expected = tuple(dict.fromkeys(args.expect_requirement or ()))
+    state = load_state(root)
+    unknown = sorted(
+        set(expected) - set(state.requirement_index.by_requirement)
+    )
+    if unknown:
+        raise RouterError(
+            "ROUTER_REQUIREMENT_UNKNOWN: " + ", ".join(unknown)
+        )
+    selected = {
+        item["id"] for item in activation.get("resolved_requirements", [])
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
+    whole = set(activation.get("whole_specs", []))
+    missing_requirements = [
+        item for item in expected
+        if item not in selected
+        and state.requirement_index.by_requirement[item].spec_id not in whole
+    ]
+    uncovered = [
+        path for path in paths
+        if not _covered(path, activation["planned_paths"])
+    ]
+    previous_changes = _paths_changed_since(root, runtime.get("baseline"))
+    epoch = runtime.get("context_epoch")
+    delivered = (
+        type(epoch) is int
+        and runtime.get("context_injected_epoch") == epoch
+        and activation.get("context_epoch") == epoch
+    )
+    errors = []
+    if previous_changes:
+        errors.append("ROUTER_PREFLIGHT_AFTER_EDIT: " + ", ".join(previous_changes))
+    if uncovered:
+        errors.append("ROUTER_PREFLIGHT_PATH_UNCOVERED: " + ", ".join(uncovered))
+    if missing_requirements:
+        errors.append(
+            "ROUTER_PREFLIGHT_REQUIREMENT_MISSING: "
+            + ", ".join(missing_requirements)
+        )
+    if not delivered:
+        errors.append("ROUTER_PREFLIGHT_CONTEXT_NOT_DELIVERED")
+    result = {
+        "ok": not errors,
+        "checked_paths": list(paths),
+        "uncovered_paths": uncovered,
+        "expected_requirements": list(expected),
+        "missing_requirements": missing_requirements,
+        "changed_since_begin": list(previous_changes),
+        "capsule_delivered_in_current_epoch": delivered,
+        "checks_only_current_turn": True,
+        "applicability_review_required": True,
+        "errors": errors,
+    }
+    _json_output(result)
+    return 0 if result["ok"] else 1
+
+
 def _activation(runtime: dict[str, object]) -> dict[str, object]:
     activation = runtime.get("activation")
     if not isinstance(activation, dict):
@@ -3000,6 +3096,17 @@ def build_parser() -> argparse.ArgumentParser:
     activate.add_argument("--none", action="store_true")
     activate.add_argument("--reason")
     activate.set_defaults(handler=command_activate)
+
+    preflight = commands.add_parser(
+        "preflight",
+        help="Check exact intended files and expected Requirements before edits",
+    )
+    preflight.add_argument("--adapter-id", required=True)
+    preflight.add_argument("--session-id", required=True)
+    preflight.add_argument("--turn-id", required=True)
+    preflight.add_argument("--path", action="append", required=True)
+    preflight.add_argument("--expect-requirement", action="append")
+    preflight.set_defaults(handler=command_preflight)
 
     status = commands.add_parser("status", help="Show the current turn receipt")
     status.add_argument("--adapter-id", required=True)
