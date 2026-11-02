@@ -494,6 +494,15 @@ def main() -> int:
         validate_engineering_spec_catalog()
         validate_markdown_links()
         run(
+            "Release metadata and component template versions",
+            [sys.executable, "-B", "scripts/check_release.py", "--base-ref",
+             os.environ.get("RF_RELEASE_BASE", "HEAD")],
+        )
+        run(
+            "Real previous-distribution Harness upgrade integration",
+            [sys.executable, "-B", "tests/integration/test_versioned_upgrade.py"],
+        )
+        run(
             "Engineering Research tests",
             [
                 sys.executable,

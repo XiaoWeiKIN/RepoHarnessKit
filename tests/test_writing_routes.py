@@ -46,8 +46,8 @@ class WritingRouteContractTests(unittest.TestCase):
                 self.assertIn("do not install Skills or create artifacts solely for writing style", prose)
                 self.assertLessEqual(len(text.splitlines()), maximum)
                 self.assertNotIn("## Common guidance", text)
-        self.assertEqual(foundryctl.CORE_HARNESS_VERSION, "1.6.0")
-        self.assertEqual(foundryctl.CODEX_ADAPTER_VERSION, "2.4.2")
+        self.assertEqual(foundryctl.CORE_HARNESS_VERSION, "1.6.1")
+        self.assertEqual(foundryctl.CODEX_ADAPTER_VERSION, "2.4.3")
         self.assertNotIn(GUIDE, foundryctl.CODEX_ROUTER_AGENTS_ROUTES)
 
     def test_migration_fixtures_are_exact_previous_seed_blobs(self) -> None:
@@ -117,8 +117,8 @@ class WritingRouteBootstrapTests(unittest.TestCase):
         for relative in OLD_SEEDS:
             self.assertIn(GUIDE, (self.repo / relative).read_text(encoding="utf-8"))
         manifest = self.manifest()
-        self.assertEqual(manifest["core"]["version"], "1.6.0")
-        self.assertEqual(manifest["adapters"][0]["version"], "2.4.2")
+        self.assertEqual(manifest["core"]["version"], "1.6.1")
+        self.assertEqual(manifest["adapters"][0]["version"], "2.4.3")
         for record in manifest["files"]:
             digest = hashlib.sha256((self.repo / record["path"]).read_bytes()).hexdigest()
             self.assertEqual(record["installed_sha256"], digest)
@@ -167,7 +167,7 @@ class WritingRouteBootstrapTests(unittest.TestCase):
         self.assertEqual(set(after), set(before) | CORE_MEMORY_PATHS)
         self.assertEqual({p for p in before if before[p] != after[p]}, {*OLD_SEEDS, foundryctl.HARNESS_MANIFEST})
         manifest = self.manifest()
-        self.assertEqual([m["id"] for m in manifest["applied_migrations"]], ["core-1.5.4-to-1.6.0", "adapter-codex-2.4.1-to-2.4.2"])
+        self.assertEqual([m["id"] for m in manifest["applied_migrations"]], ["core-1.5.4-to-1.6.1", "adapter-codex-2.4.1-to-2.4.3"])
         for relative in OLD_SEEDS:
             self.assertIn(GUIDE, after[relative].decode())
         repeated = self.cli("upgrade", "--to", foundryctl.REPO_FOUNDRY_VERSION, "--apply")

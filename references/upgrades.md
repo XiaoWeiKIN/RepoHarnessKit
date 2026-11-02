@@ -8,9 +8,9 @@ migration。schema 迁移必须走 upgrade；schema 3 中追加 adapter 时，bo
 
 ```bash
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.1
+  upgrade --to 0.15.2
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.1 --apply
+  upgrade --to 0.15.2 --apply
 ```
 
 必须先展示 dry-run 结果。只有用户已要求实施升级且计划无 conflict 时才使用
@@ -19,6 +19,12 @@ python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
 合并。`legacy-unversioned` seed 保持原字节，除非它已经与当前模板完全一致。apply
 后必须报告更新路径和验证结果；验证失败由 CLI 回滚。详细兼容矩阵见
 [Bootstrap 契约](bootstrap.md#版本与-harness-升级)。
+
+0.15.2 将 Core 提升到 1.6.1、Codex 到 2.4.3、Claude 到 1.3.2、Portable 到
+1.3.3，以恢复 0.15.1 / Core 1.6.0 旧安装的官方升级兼容性。旧 seed 必须仍匹配
+原 manifest 的安装摘要；生成文件有未知改动时 preview 报告 conflict，apply 拒绝
+全部写入。不要修改旧 manifest 或绕过摘要验证。完整版本面与回归范围见
+[0.15.2 发布候选说明](../docs/releases/0.15.2.md)。
 
 0.8.0 及以上的显式升级还会补齐空的 Decision View registry、索引和投影目录。它不会
 创建领域 View、修改 ADR、推断 retirement 或执行语义合并。大型 ADR corpus 的

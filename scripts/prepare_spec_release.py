@@ -57,6 +57,12 @@ def prepare(root: Path, catalog_version: str) -> dict[str, str]:
         new_contents[path] = text
 
     # No partially applied source tree if one expected contract has drifted.
+    metadata_path = root / "release.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if metadata["distribution"] != old_version or metadata["default_spec_version"] != previous_spec:
+        raise ValueError("Release metadata differs from the current distribution")
+    metadata.update(distribution=new_version, default_spec_version=catalog_version)
+    new_contents[metadata_path] = json.dumps(metadata, indent=2) + "\n"
     for path, text in new_contents.items():
         path.write_text(text, encoding="utf-8")
     (root / "VERSION").write_text(new_version + "\n", encoding="utf-8")

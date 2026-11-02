@@ -240,7 +240,7 @@ class MemoryRuntimeIntegrationTests(unittest.TestCase):
 
     def test_bootstrap_registers_new_assets_but_does_not_enable_cooling(self):
         manifest = json.loads((self.root / 'docs/.engineering/harness.json').read_text())
-        self.assertEqual(manifest['core']['version'], '1.6.0')
+        self.assertEqual(manifest['core']['version'], '1.6.1')
         paths = {item['path'] for item in manifest['files']}
         for name in ('memory_runtime.py', 'memory_retrieval.py'):
             relative = '.repo-foundry/engineering-specs/' + name

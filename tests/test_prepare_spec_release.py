@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import shutil
 import tempfile
 import unittest
@@ -20,7 +21,7 @@ FILES = (
     "VERSION", "scripts/foundryctl.py", "tests/test_foundryctl.py",
     "tests/test_repository_contracts.py", "README.md", "README.zh-CN.md",
     "references/specifications.md", "references/bootstrap.md",
-    "references/upgrades.md",
+    "references/upgrades.md", "release.json",
 )
 
 
@@ -55,6 +56,9 @@ class SpecDrivenReleaseTests(unittest.TestCase):
             "rf_version": expected_rf,
         })
         self.assertEqual((self.root / "VERSION").read_text().strip(), expected_rf)
+        metadata = json.loads((self.root / "release.json").read_text())
+        self.assertEqual(metadata["distribution"], expected_rf)
+        self.assertEqual(metadata["default_spec_version"], self.new_spec)
         self.assertIn(
             f'DEFAULT_SPEC_VERSION = "{self.new_spec}"',
             (self.root / "scripts/foundryctl.py").read_text(),
