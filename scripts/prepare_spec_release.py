@@ -44,7 +44,8 @@ def prepare(root: Path, catalog_version: str) -> dict[str, str]:
         "README.zh-CN.md": [(old_version, new_version), (previous_spec, catalog_version)],
         "references/specifications.md": [(previous_spec, catalog_version)],
         "references/bootstrap.md": [(old_version, new_version)],
-        "references/upgrades.md": [(old_version, new_version)],
+        "references/upgrades.md": [(f"upgrade --to {old_version}",
+                                     f"upgrade --to {new_version}")],
     }
     new_contents = {}
     for name, pairs in updates.items():

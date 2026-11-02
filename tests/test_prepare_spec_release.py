@@ -84,6 +84,15 @@ class SpecDrivenReleaseTests(unittest.TestCase):
                 release.prepare(self.root, value)
         self.assertEqual(self.snapshot(), before)
 
+    def test_historical_release_note_link_survives_next_spec_release(self) -> None:
+        doc = self.root / "references/upgrades.md"
+        before = doc.read_text()
+        link = "../docs/releases/0.15.2.md"
+        self.assertIn(link, before)
+        result = release.prepare(self.root, self.new_spec)
+        self.assertIn(link, doc.read_text())
+        self.assertIn(f"upgrade --to {result['rf_version']}", doc.read_text())
+
 
 if __name__ == "__main__":
     unittest.main()
