@@ -30,7 +30,8 @@ def read(path):
     obj = json.loads(Path(path).read_text())
     if obj.get("tampered"):
         raise handoff.HandoffError("tampered")
-    return {"command": obj["command"], "payload_sha256": "a" * 64}
+    return {"command": obj["command"], "payload_sha256": "a" * 64,
+            "revision": {"observed_files": [{"path": p} for p in obj.get("observed_paths", [])]}}
 def check_receipt(root, path):
     obj = json.loads(Path(path).read_text())
     if obj.get("mutate_policy"):
@@ -40,15 +41,20 @@ def check_receipt(root, path):
     if obj.get("mutate_receipt"):
         return {"outcome": "passed", "receipt_sha256": "b" * 64,
                 "exit_code": 0, "reasons": []}
+    if obj.get("mutate_bound_file"):
+        Path(obj["mutate_bound_file"]).write_text("modified during gate")
+    if obj.get("corrupt_after_check"):
+        Path(path).write_text("damaged after check")
     if obj.get("source_changed"):
         return {"outcome": "stale", "receipt_sha256": "a" * 64,
                 "exit_code": 0, "reasons": ["OBSERVED_BYTES_CHANGED"]}
     return {"outcome": obj["outcome"], "receipt_sha256": "a" * 64,
             "exit_code": 0 if obj["outcome"] == "passed" else 1, "reasons": []}
 def observe(root, inputs, base):
-    return {"state": "stable"}
+    return {"observed": [(p, (root / p).read_bytes().hex() if (root / p).is_file() else "missing")
+                         for p in inputs]}
 def drift(before, after):
-    return []
+    return [] if before == after else ["OBSERVED_BYTES_CHANGED"]
 '''
 
 
@@ -56,7 +62,7 @@ class CompletionTests(unittest.TestCase):
     def setUp(self):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
-        self.home = Path(tmp.name)
+        self.home = Path(tmp.name).resolve()
         self.scripts = self.home / "scripts"
         self.scripts.mkdir()
         shutil.copyfile(SCRIPT, self.scripts / "verification_completion.py")
@@ -186,6 +192,66 @@ class CompletionTests(unittest.TestCase):
         result = self.run_gate(1)
         self.assertEqual(result["checks"][0]["status"], "UNVERIFIED")
 
+    def test_ignored_source_changed_during_gate_blocks(self):
+        ignored = self.repo / "ignored-source.txt"
+        ignored.write_text("initial")
+        self.write(self.tidy, {"command": ["go", "mod", "tidy", "-diff"],
+                               "outcome": "passed", "observed_paths": ["ignored-source.txt"],
+                               "mutate_bound_file": str(ignored)})
+        result = self.run_gate(1)
+        self.assertEqual(result["completion"], "BLOCKED")
+        self.assertIn("OBSERVED_BYTES_CHANGED", result["worktree_changed_during_gate"])
+
+    def test_receipt_corrupted_after_check_blocks(self):
+        self.write(self.tidy, {"command": ["go", "mod", "tidy", "-diff"],
+                               "outcome": "passed", "corrupt_after_check": True})
+        result = self.run_gate(1)
+        self.assertEqual(result["completion"], "BLOCKED")
+        self.assertIn("RECEIPT_CHANGED_DURING_GATE:go-tidy", result["input_changed_during_gate"])
+
+    def test_receipt_hardlink_reuse_rejected(self):
+        self.race.unlink()
+        self.race.hardlink_to(self.tidy)
+        self.run_gate(2)
+
+    def test_receipt_content_copy_reuse_rejected(self):
+        self.race.write_bytes(self.tidy.read_bytes())
+        self.run_gate(2)
+
+    def test_policy_parent_symlink_rejected(self):
+        original = self.home / "trusted"
+        original.mkdir()
+        real = original / "policy.json"
+        real.write_bytes(self.policy.read_bytes())
+        alias = self.home / "alias"
+        alias.symlink_to(original, target_is_directory=True)
+        self.policy = alias / "policy.json"
+        self.run_gate(2)
+
+    def test_evidence_parent_symlink_rejected(self):
+        original = self.home / "trusted-evidence"
+        original.mkdir()
+        real = original / "index.json"
+        real.write_bytes(self.evidence.read_bytes())
+        alias = self.home / "alias-evidence"
+        alias.symlink_to(original, target_is_directory=True)
+        self.evidence = alias / "index.json"
+        self.run_gate(2)
+
+    def test_receipt_parent_symlink_is_not_accepted(self):
+        original = self.home / "trusted-receipts"
+        original.mkdir()
+        real = original / "tidy.json"
+        real.write_bytes(self.tidy.read_bytes())
+        alias = self.home / "alias-receipts"
+        alias.symlink_to(original, target_is_directory=True)
+        self.write(self.evidence, {"schema_version": 1, "receipts": [
+            {"id": "go-tidy", "path": str(alias / "tidy.json")},
+            {"id": "go-race", "path": str(self.race)},
+        ]})
+        result = self.run_gate(1)
+        self.assertEqual(result["checks"][0]["status"], "UNVERIFIED")
+
     def test_symlink_policy_is_rejected(self):
         target = self.home / "target.json"
         target.write_bytes(self.policy.read_bytes())
@@ -202,7 +268,7 @@ class RealReceiptIntegrationTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.base = Path(self.tmp.name)
+        self.base = Path(self.tmp.name).resolve()
         self.repo = self.base / "project"
         self.repo.mkdir()
         self.execute(["git", "init", "-b", "main"], cwd=self.repo)
