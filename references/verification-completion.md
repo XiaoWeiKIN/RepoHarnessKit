@@ -81,8 +81,18 @@ Never report complete verification when its exit status is nonzero.
 - Receipt data is digest-checked, **not authenticated**. This tool cannot
   attest to actual tool identity, runtime isolation, complete session capture,
   or OS-level enforcement.
-- Source binding covers Git-observed changes and explicitly declared paths;
-  ignored inputs and external dependencies remain unknown unless bound.
+- Source binding covers Git-observed changes and paths explicitly observed by
+  the saved Receipts, including Git-ignored files. Unbound ignored inputs and
+  external dependencies remain unknown.
+- The gate rejects content-identical Receipt copies and hardlinks used for more
+  than one required check. Receipt contents and identity are rechecked after all
+  per-command checks, rather than only during each individual check.
+- Coordinator JSON, evidence index and Receipt paths must not contain symlinks
+  in any ancestor directory. On macOS, use canonical paths (for example under
+  /private/var rather than /var when /var is a symlink).
+- Path checks and before/after snapshots are best-effort. They do not prevent
+  hostile concurrent mutation, including a change reverted between snapshots;
+  trusted isolation and source freeze remain mandatory.
 - This checks a **predeclared command list**, not all Requirement obligations;
   independent Requirement-level grading remains necessary.
 - The CLI is **opt-in**; it does not install a Codex native completion Hook.
