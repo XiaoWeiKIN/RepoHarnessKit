@@ -1,0 +1,56 @@
+{
+  "artifact_type": "benchmark-manifest",
+  "author": "ChatGPT",
+  "created": "2026-11-03T10:04:35Z",
+  "executed_by": "ChatGPT",
+  "files": [
+    {
+      "bytes": 8298,
+      "path": "RESULT.md",
+      "sha256": "348600c217c01cc033ed035e638d9b4554bcb506c8b3f82bcf92126c970c047d"
+    },
+    {
+      "bytes": 8803,
+      "path": "SCENARIO.md",
+      "sha256": "b1ee033dda0bf0d44a34de6cbc165f869bc0142ae874fccbbc6b735e7d52cdd1"
+    },
+    {
+      "bytes": 898,
+      "path": "artifacts/environment.json",
+      "sha256": "799277ad473dea295ecbfc6e4b8b747ce8865c550a25e257d13859bda747e3c1"
+    },
+    {
+      "bytes": 626,
+      "path": "artifacts/evidence-index.json",
+      "sha256": "10bff09ede85065ce853e70024ff044957222b1529a06df430588059e1fa0c2b"
+    },
+    {
+      "bytes": 495,
+      "path": "artifacts/execution.json",
+      "sha256": "aa095c8630e87c9ace8ad3fdef528616eec6bffa73dfbfa8f154cd37bf30ef6b"
+    },
+    {
+      "bytes": 4169,
+      "path": "artifacts/observations.json.gz",
+      "sha256": "ce7b60544adc549db064b7204a827eb4193febec5c66a23910478f0a5a19182b"
+    },
+    {
+      "bytes": 775,
+      "path": "artifacts/preregistered-inputs.json",
+      "sha256": "86ddabdefbd63631848a33465c6e21909e0b48cce53866cbca95d02a009ca4ff"
+    }
+  ],
+  "id": "BR-002-MANIFEST",
+  "metadata_schema": "1",
+  "outcome": "inconclusive",
+  "owner": "RepoFoundry Maintainer",
+  "payload_sha256": "31cc2a8a1aabf03ae333d5209ae6127ea2f23428016d71bb560677af24c70279",
+  "run_id": "BR-002",
+  "scenario_id": "BS-001",
+  "schema_version": "1.1",
+  "sealed_at": "2026-11-03T10:11:19Z",
+  "status": "sealed",
+  "suite_id": "B-001",
+  "title": "Current main complete read-only candidate replay — Evidence manifest",
+  "updated": "2026-11-03T10:11:19Z"
+}

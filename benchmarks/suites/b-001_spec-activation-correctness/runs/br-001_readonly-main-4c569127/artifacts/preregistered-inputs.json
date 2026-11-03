@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "frozen_at_utc": "2026-11-03T10:02:28.823330+00:00",
+  "source_revision": "4c56912785f498232c69722bd6327b92aaed4a04",
+  "files": {
+    "evals/spec-activation/baseline.py": "ce17f468f29c9038496daa6e4c71f7d6eea5de51f2ed14515569360fc80222b9",
+    "evals/spec-activation/corpus.json": "897a792aee32010a45060d1b26846fcf6c8dec27783868405314c9d6519c3796",
+    "evals/spec-activation/history.json": "998c59173f10f467b3470096f6ae6a71e40a98d7bd9668cc5a9848248427a579",
+    "tests/test_activation_baseline.py": "cec1bf872077303aee0a72ca496869cb3ff189e9fc8aa426fb9adcb914609561",
+    "benchmarks/suites/b-001_spec-activation-correctness/scenarios/bs-001_readonly-candidate-baseline.md": "b1ee033dda0bf0d44a34de6cbc165f869bc0142ae874fccbbc6b735e7d52cdd1"
+  }
+}

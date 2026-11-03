@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "retrieval_scope": [
+    "Library reports and original archives materialized on 2026-11-03",
+    "GitHub PR 110 body and empty comment timeline at updated_at 2026-11-03T06:43:32Z",
+    "RepoHarnessKit file search: missed Requirements baseline violations (no result)",
+    "repoharness-agent-benchmark main tree 73f08883f4cdd17f7aef90f4962f2872a0b9d9a3",
+    "Original 2026-10-31 APM validation archive and 2026-11-01 AB activation re-audit inspected; distinct HTTP experiment, not evidence for aggregate 17/7."
+  ],
+  "unresolved_claims": [
+    {
+      "id": "claimed-17-omissions",
+      "reported_count": 17,
+      "unit": "unspecified: distinct Requirement IDs vs task occurrences",
+      "source": "https://github.com/XiaoWeiKIN/RepoHarnessKit/pull/110",
+      "source_updated_at": "2026-11-03T06:43:32Z",
+      "source_head": "11f1176b21e803347ec91c7b2558b364c147916c",
+      "status": "original_itemized_evidence_not_located",
+      "requirement_ids": null,
+      "code_snapshot": null,
+      "catalog_lock_pin": null,
+      "denominator_eligible": false
+    },
+    {
+      "id": "claimed-7-violations",
+      "reported_count": 7,
+      "unit": "unspecified baseline violations",
+      "source": "https://github.com/XiaoWeiKIN/RepoHarnessKit/pull/110",
+      "status": "original_itemized_evidence_not_located",
+      "requirement_ids": null,
+      "code_snapshot": null,
+      "catalog_lock_pin": null,
+      "denominator_eligible": false
+    }
+  ],
+  "archives": [
+    {
+      "name": "repoharness-spec-compliance-88a7202-20261101.zip",
+      "sha256": "92446e00a856a86f80403e21ee3c426e9ee0554b26978b12e3765a622b1e1d59",
+      "verified_payload_count": 409,
+      "manifest_sha256": "8feadf10e70a17f0621a5d0987604218f3013af195e56da6ccbe5d90ac5db932"
+    },
+    {
+      "name": "repoharness-pr109-8567a0f2-evidence-20261102.zip",
+      "sha256": "e94e193f9656e57dcd76b4d0216fdcaa8c77a0775d39bee3f0908971c87c4c71",
+      "verified_payload_count": 269,
+      "manifest_sha256": "5fa48c33949298110007e678fe6c1d9a48ac4d0649d6b7bb024800504b98eb65"
+    }
+  ],
+  "recovered_experiment": {
+    "id": "spec-compliance-20261101",
+    "archive_sha256": "92446e00a856a86f80403e21ee3c426e9ee0554b26978b12e3765a622b1e1d59",
+    "archive_name": "repoharness-spec-compliance-88a7202-20261101.zip",
+    "harness_revision": "88a72024018f9258ef7c66f7ad36bd0554df9ce1",
+    "apm_revision": "a0eae73f2ec10e9a28c00eb48e0a3593a69209f1",
+    "local_baseline_revision": "7036e97cc705e65c971c977dc79e493fe7745c41",
+    "catalog_revision": "b0719f806615c0bb4f3d496931f14b6dc29df7e6",
+    "lock_sha256": "e26d2619a003aaa44524f85a663654529cd16839b61a6d4153a1879466075c00",
+    "counts_preserved": {
+      "PASS": 14,
+      "UNVERIFIED": 1,
+      "FAIL": 4,
+      "N/A": 37
+    },
+    "missing_preserved": [
+      "SIM-PATH-001",
+      "SIM-READ-001",
+      "GO-NAME-001"
+    ],
+    "identity_relation_to_17_7": "not_established",
+    "direct_selected": [
+      "DATA-EFFECT-001",
+      "DATA-NORMALIZE-001",
+      "SIM-CHANGE-001",
+      "GO-FORMAT-001",
+      "GO-ERROR-001",
+      "GO-COMPAT-001",
+      "GO-TEST-001"
+    ],
+    "resolved_selected": [
+      "DATA-SHAPE-001",
+      "DATA-PARSE-001",
+      "DATA-EFFECT-001",
+      "SEM-NAME-001",
+      "SEM-VERB-001",
+      "DATA-NORMALIZE-001",
+      "SIM-SCOPE-001",
+      "SIM-ABSTRACT-001",
+      "SIM-CHANGE-001",
+      "GO-FORMAT-001",
+      "DATA-ERROR-001",
+      "GO-ERROR-001",
+      "SEM-SURFACE-001",
+      "SEM-COMPAT-001",
+      "GO-COMPAT-001",
+      "GO-TEST-001"
+    ],
+    "initial_planned_paths": [
+      "internal/policy/**/*.go"
+    ],
+    "capsule_sha256": "b3bddd08eb4d1aaf22a0bce3ba4ba35d4a17c029eed65aac4424a6eeae4756bb",
+    "initial_context_epoch": 1,
+    "sources": [
+      {
+        "path": "REPORT.md",
+        "sha256": "2b20efcc45c18ac1c5f0679f48fa13af3934d39b736231baf7b7fc19665a370f"
+      },
+      {
+        "path": "audit/compliance-matrix.json",
+        "sha256": "236b185f8aae3289031671614678256232cc374a4e65f26985e67f2722888f01"
+      },
+      {
+        "path": "audit/independent-review.md",
+        "sha256": "35e7c0d142066c007a312905156bf154696efa1db11ccd3331d4939f2cc208a5"
+      },
+      {
+        "path": "audit-pre/requirement-scope-v1.json",
+        "sha256": "d0115213c6b3cf1b025f0ca8a70c40da420a48debdfcae6c2eb0001e10ce77eb"
+      },
+      {
+        "path": "audit-pre/before-specs.lock.json",
+        "sha256": "e26d2619a003aaa44524f85a663654529cd16839b61a6d4153a1879466075c00"
+      },
+      {
+        "path": "evidence/coder-014-router-activate-reviewed-budget.json",
+        "sha256": "00e262772016112f4eb0922054180de65fd36244a25e677909912301703bf1e6"
+      },
+      {
+        "path": "evidence/coder-017-read-exact-capsule.json",
+        "sha256": "d5357b0b6de7a4db0b0ac11a5f6e7c04f6bb69c9e70e0ac4a42f117ec4b5a433"
+      },
+      {
+        "path": "frozen/final.diff",
+        "sha256": "7a077b417524663d2d7ed9f7de3c1eb2e79552dfd35c47f9b2c6c127a0e40daa"
+      },
+      {
+        "path": "sources/initial-B.tar.gz",
+        "sha256": "4681634fe89b8ba56e46e73d943ded022f86666b476f9209eb847ca203414398"
+      },
+      {
+        "path": "sources/subject-local-baseline.bundle",
+        "sha256": "6c6b17f1a0822edc83db0459172b7f71927145d06c96333a741337e5f9a97c43"
+      }
+    ]
+  },
+  "additional_inspected_archives": [
+    {
+      "name": "repoharness-apm-spec-validation-20261031.zip",
+      "sha256": "37e73930594fd016cee394bc5b156ab7df79389b3a1019afa285daa7bd27b3f2",
+      "scope": "Report and activation evidence inspected; not counted as the unidentified 17/7 experiment."
+    }
+  ]
+}

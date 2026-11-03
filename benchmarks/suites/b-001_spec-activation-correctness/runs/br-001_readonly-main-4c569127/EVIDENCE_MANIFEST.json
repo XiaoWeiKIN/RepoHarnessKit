@@ -1,0 +1,41 @@
+{
+  "artifact_type": "benchmark-manifest",
+  "author": "ChatGPT",
+  "created": "2026-11-03T10:02:50Z",
+  "executed_by": "ChatGPT",
+  "files": [
+    {
+      "bytes": 2413,
+      "path": "RESULT.md",
+      "sha256": "b115bbd7b422197cf76f24fd01806acbd0aa52f015234c04d75b3f7778768d16"
+    },
+    {
+      "bytes": 8803,
+      "path": "SCENARIO.md",
+      "sha256": "b1ee033dda0bf0d44a34de6cbc165f869bc0142ae874fccbbc6b735e7d52cdd1"
+    },
+    {
+      "bytes": 416,
+      "path": "artifacts/execution.json",
+      "sha256": "adbfcb3b7fe6abf06d22aeda96288a266b3be6c914acf4d932e49aaa0a1f5936"
+    },
+    {
+      "bytes": 775,
+      "path": "artifacts/preregistered-inputs.json",
+      "sha256": "86ddabdefbd63631848a33465c6e21909e0b48cce53866cbca95d02a009ca4ff"
+    }
+  ],
+  "id": "BR-001-MANIFEST",
+  "metadata_schema": "1",
+  "outcome": "errored",
+  "owner": "RepoFoundry Maintainer",
+  "payload_sha256": "cd9373980b71c1d8583f25ebf9ecdf8ca76c0a0c389b2359bbe3dd8c1d248077",
+  "run_id": "BR-001",
+  "scenario_id": "BS-001",
+  "schema_version": "1.1",
+  "sealed_at": "2026-11-03T10:04:34Z",
+  "status": "sealed",
+  "suite_id": "B-001",
+  "title": "Current main read-only activation-candidate baseline — Evidence manifest",
+  "updated": "2026-11-03T10:04:34Z"
+}
