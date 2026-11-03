@@ -10,7 +10,7 @@ adr_refs: ["ADR-011", "ADR-012", "ADR-015", "ADR-058"]
 author: "Codex"
 owner: "RepoFoundry Maintainer"
 created: 2026-08-03
-updated: 2026-09-03
+updated: 2026-11-02
 ---
 
 # RepoFoundry Versioning and Harness Migrations
@@ -21,9 +21,9 @@ RepoFoundry must be able to improve its Skill, scripts, Core, adapters, and gene
 files without treating an existing repository as disposable. Versioning is
 therefore part of the repository contract, not only release metadata.
 
-The current distribution is `0.8.3`. It writes Harness schema `3`, Core
-`1.5.0`, Codex adapter `2.4.0`, Claude adapter `1.3.0`, Portable adapter
-`1.3.0`, governance policy schema `1`, and activation protocol `2`.
+The current distribution is `0.15.2`. It writes Harness schema `3`, Core
+`1.6.1`, Codex adapter `2.4.3`, Claude adapter `1.3.2`, Portable adapter
+`1.3.3`, governance policy schema `1`, and activation protocol `2`.
 Engineering Specifications keep their independent Catalog version and lock
 lifecycle. Earlier distributions, schemas `1` and `2`, earlier schema-3 Core
 and adapters, and Codex profile `1.0.0` remain migration inputs.
@@ -32,15 +32,15 @@ and adapters, and Codex profile `1.0.0` remain migration inputs.
 
 | Plane | Current | Stored in | Meaning |
 |---|---:|---|---|
-| RepoFoundry distribution | `0.8.3` | `VERSION`, `producer.version` | Skill and CLI release that produced or last migrated the Harness |
+| RepoFoundry distribution | `0.15.2` | `VERSION`, `producer.version` | Skill and CLI release that produced or last migrated the Harness |
 | Harness schema | `3` | `schema_version` | JSON state shape and validation contract |
-| Harness Core | `1.5.0` | `core.version`, Core file records | Product-neutral repository, project Skill, and mode-aware activation behavior |
-| Codex adapter | `2.4.0` | `adapters[]`, adapter file records | Codex instructions, Skills, Hooks, and event translation |
-| Claude adapter | `1.3.0` | `adapters[]`, adapter file records | Claude project Skills with CLI/advisory classification and activation |
-| Portable adapter | `1.3.0` | `adapters[]`, adapter file records | CLI and advisory classification and activation |
+| Harness Core | `1.6.1` | `core.version`, Core file records | Product-neutral repository, project Skill, and mode-aware activation behavior |
+| Codex adapter | `2.4.3` | `adapters[]`, adapter file records | Codex instructions, Skills, Hooks, and event translation |
+| Claude adapter | `1.3.2` | `adapters[]`, adapter file records | Claude project Skills with CLI/advisory classification and activation |
+| Portable adapter | `1.3.3` | `adapters[]`, adapter file records | CLI and advisory classification and activation |
 | Governance policy | `1` | optional `governance` object in schema `3` | Repository profile; missing means strict compatibility |
 | Activation protocol | `2` | Core executable and adapter capability output | Normalized event, exact capsule, receipt, and epoch semantics |
-| Engineering Specs Catalog | `1.5.0` by default | `specs.json`, `specs.lock.json` | Independently selected engineering guidance release |
+| Engineering Specs Catalog | `1.9.0` by default | `specs.json`, `specs.lock.json` | Independently selected engineering guidance release |
 
 No plane inherits another plane's version. A Spec update does not migrate the
 Harness, and a RepoFoundry upgrade does not change the selected Spec Catalog.
@@ -146,10 +146,10 @@ the new derived Requirement index without selecting another Catalog.
 
 ```mermaid
 flowchart LR
-    D["RepoFoundry distribution<br/>VERSION 0.8.3"] --> P["producer.version"]
+    D["RepoFoundry distribution<br/>VERSION 0.15.2"] --> P["producer.version"]
     D --> U["foundryctl upgrade"]
     U --> H["Harness schema 3"]
-    U --> C["Harness Core 1.5.0"]
+    U --> C["Harness Core 1.6.1"]
     U --> A["Codex + Claude + Portable adapters"]
     C --> F["Core file provenance"]
     A --> F
@@ -212,6 +212,16 @@ Every distributed change updates the planes it actually changes:
 In particular, template bytes must never change while keeping the same owning
 Core or adapter version. A distribution-only script or Skill fix may leave the
 schema, Core, and adapter versions unchanged.
+
+`release.json` mirrors `VERSION` and the authoritative CLI constants for release
+tooling. `scripts/check_release.py --base-ref <commit>` verifies that metadata
+and compares each owner's exact template bytes and file mapping against the
+specified Git commit. Changed templates require a strictly greater owner version
+and distribution version. The checker parses historical declarations as data;
+it does not import or execute historical Python. CI supplies the PR base or
+previous main-push SHA, so a clean checkout cannot hide changes behind `HEAD`.
+The canonical source check also exercises an actual previous-distribution
+bootstrap followed by the current official preview/apply/validate workflow.
 
 ## Schema compatibility
 

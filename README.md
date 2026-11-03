@@ -290,12 +290,12 @@ to an immutable commit, records the archive SHA-256, and validates the staged
 package before activation.
 
 Repository migration remains a separate, preview-first operation. After a
-distribution upgrade, run this in each existing project and replace `0.15.1`
+distribution upgrade, run this in each existing project and replace `0.15.2`
 with the installed target version when necessary:
 
 ```bash
-repofoundry --repo . upgrade --to 0.15.1
-repofoundry --repo . upgrade --to 0.15.1 --apply
+repofoundry --repo . upgrade --to 0.15.2
+repofoundry --repo . upgrade --to 0.15.2 --apply
 repofoundry --repo . validate
 ```
 
@@ -564,9 +564,9 @@ repofoundry --repo . \
 repofoundry --repo . validate --harness
 repofoundry --repo . validate --adapter codex
 repofoundry --repo . validate --adapter claude
-repofoundry --repo . upgrade --to 0.15.1
-repofoundry --repo . upgrade --to 0.15.1 --governance-profile adaptive
-repofoundry --repo . upgrade --to 0.15.1 --apply
+repofoundry --repo . upgrade --to 0.15.2
+repofoundry --repo . upgrade --to 0.15.2 --governance-profile adaptive
+repofoundry --repo . upgrade --to 0.15.2 --apply
 
 repofoundry --repo . spec plan
 repofoundry --repo . spec sync --apply
@@ -610,12 +610,12 @@ creates missing paths and preserves repository-owned files. An agent
 instruction file registered by an adapter must stay within that adapter's line
 budget. Codex `AGENTS.md` remains capped at 100 physical lines.
 
-RepoFoundry `0.15.1` uses Harness schema `3`, Harness Core `1.5.5`, Codex
-adapter `2.4.2`, Claude adapter `1.3.1`, Portable adapter `1.3.2`, and
+RepoFoundry `0.15.2` uses Harness schema `3`, Harness Core `1.6.1`, Codex
+adapter `2.4.3`, Claude adapter `1.3.2`, Portable adapter `1.3.3`, and
 activation protocol `2`.
 Those versions evolve independently from the Engineering Specs Catalog.
 Schemas `1` and `2` stay readable but are changed only by an explicit
-`upgrade --to 0.15.1 --apply`. Earlier schema `3` Core and adapter contracts
+`upgrade --to 0.15.2 --apply`. Earlier schema `3` Core and adapter contracts
 also stay readable; an upgrade, or a previewed bootstrap that adds
 an adapter, records the component migrations and creates the new project Skill
 paths. A versioned seed is replaced only when its bytes still match the
