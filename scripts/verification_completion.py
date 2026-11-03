@@ -12,12 +12,14 @@ import hashlib
 import json
 import os
 import re
+import stat
 import sys
 from pathlib import Path
 
 import verification_receipt as receipt
 
 MAX_MANIFEST = 128 * 1024
+MAX_RECEIPT_BYTES = 256 * 1024
 MAX_CHECKS = 64
 CHECK_ID = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -27,15 +29,44 @@ class InputError(ValueError):
     pass
 
 
-def read_json(path: Path) -> tuple[dict, str]:
-    """Read a bounded, non-symlink JSON object with unique keys."""
-    if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_MANIFEST:
-        raise InputError(f"missing, unsafe or oversized input: {path}")
+def secure_path(path: Path) -> Path:
+    """Reject a symlink in any path component, not just the final filename.
+
+    This is best-effort path inspection, not an immutable filesystem guarantee.
+    Callers on systems with a symlinked /var or /tmp should pass canonical paths.
+    """
+    absolute = Path(os.path.abspath(path))
+    if any(part.is_symlink() for part in (absolute, *absolute.parents)):
+        raise InputError(f"symlink in input path: {path}")
+    return absolute
+
+
+def read_snapshot(path: Path, limit: int) -> tuple[bytes, tuple[str, int, int]]:
+    """Read bounded file bytes with inode identity and a stability check."""
+    safe = secure_path(path)
     flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
-    with os.fdopen(os.open(path, flags), "rb") as stream:
-        data = stream.read(MAX_MANIFEST + 1)
-    if len(data) > MAX_MANIFEST:
-        raise InputError(f"oversized input: {path}")
+    try:
+        with os.fdopen(os.open(safe, flags), "rb") as handle:
+            start = os.fstat(handle.fileno())
+            if not stat.S_ISREG(start.st_mode) or start.st_size > limit:
+                raise InputError(f"not a bounded regular file: {path}")
+            data = handle.read(limit + 1)
+            end = os.fstat(handle.fileno())
+        current = os.stat(safe, follow_symlinks=False)
+    except OSError as exc:
+        raise InputError(f"cannot read input: {path}") from exc
+    if len(data) > limit or (start.st_dev, start.st_ino, start.st_size,
+                            start.st_mtime_ns, start.st_ctime_ns) != (
+                            end.st_dev, end.st_ino, end.st_size,
+                            end.st_mtime_ns, end.st_ctime_ns) or (
+                            end.st_dev, end.st_ino) != (current.st_dev, current.st_ino):
+        raise InputError(f"input changed while being read: {path}")
+    return data, (hashlib.sha256(data).hexdigest(), end.st_dev, end.st_ino)
+
+
+def read_json(path: Path) -> tuple[dict, str]:
+    """Read a bounded, no-symlink JSON object with unique keys."""
+    data, fingerprint = read_snapshot(path, MAX_MANIFEST)
 
     def unique(pairs):
         obj = {}
@@ -46,15 +77,14 @@ def read_json(path: Path) -> tuple[dict, str]:
         return obj
 
     try:
-        obj = json.loads(
-            data.decode("utf-8"), object_pairs_hook=unique,
-            parse_constant=lambda _: (_ for _ in ()).throw(InputError("nonfinite JSON")),
-        )
+        obj = json.loads(data.decode("utf-8"), object_pairs_hook=unique,
+                         parse_constant=lambda _: (_ for _ in ()).throw(InputError("nonfinite JSON")))
     except (ValueError, UnicodeError) as exc:
         raise InputError(f"invalid JSON: {path}") from exc
     if not isinstance(obj, dict):
         raise InputError("expected JSON object")
-    return obj, hashlib.sha256(data).hexdigest()
+    return obj, fingerprint[0]
+
 
 
 def validate_policy(obj: dict) -> dict[str, list[str]]:
@@ -111,9 +141,7 @@ def check(root: Path, policy_file: Path, evidence_file: Path,
           expected_policy_sha256: str) -> tuple[dict, int]:
     if not SHA256.fullmatch(expected_policy_sha256):
         raise InputError("invalid expected policy SHA-256")
-    # Coordinator policy cannot live inside the Agent-editable worktree.
-    # This is not a proof of access controls; the caller owns isolation.
-    policy_path = policy_file.resolve(strict=True)
+    policy_path = secure_path(policy_file)
     if policy_path == root or root in policy_path.parents:
         raise InputError("coordinator policy must be outside the observed repository")
     policy, policy_digest = read_json(policy_file)
@@ -122,20 +150,54 @@ def check(root: Path, policy_file: Path, evidence_file: Path,
     evidence, evidence_digest = read_json(evidence_file)
     required = validate_policy(policy)
     supplied = validate_evidence(evidence, set(required))
-    before = receipt.observe(root, [], None)
+
+    # Load every Receipt before taking a gate-wide snapshot. Its observed_files
+    # may include explicitly bound Git-ignored source files.
+    records = {}
+    fingerprints = {}
+    invalid = {}
+    bound_paths: set[str] = set()
+    used_inodes: set[tuple[int, int]] = set()
+    used_contents: set[str] = set()
+    for name, path in supplied.items():
+        try:
+            _, before_fp = read_snapshot(Path(path), MAX_RECEIPT_BYTES)
+            if (before_fp[1], before_fp[2]) in used_inodes or before_fp[0] in used_contents:
+                raise InputError("one Receipt used for multiple checks (hardlink or copy)")
+            used_inodes.add((before_fp[1], before_fp[2]))
+            used_contents.add(before_fp[0])
+            record = receipt.read(path)
+            _, after_fp = read_snapshot(Path(path), MAX_RECEIPT_BYTES)
+            if before_fp != after_fp:
+                raise InputError("Receipt changed during initial validation")
+            records[name] = record
+            fingerprints[name] = after_fp
+            bound_paths.update(item["path"] for item in record["revision"]["observed_files"])
+        except InputError as exc:
+            if "multiple checks" in str(exc):
+                raise
+            invalid[name] = type(exc).__name__
+        except (OSError, ValueError, KeyError, TypeError, receipt.handoff.HandoffError) as exc:
+            invalid[name] = type(exc).__name__
+
+    observed = sorted(bound_paths)
+    before = receipt.observe(root, observed, None)
     rows = []
     for name, command in required.items():
         path = supplied.get(name)
         if path is None:
             rows.append({"id": name, "status": "UNVERIFIED", "reason": "MISSING_RECEIPT"})
             continue
+        if name in invalid:
+            rows.append({"id": name, "status": "UNVERIFIED", "reason": "INVALID_RECEIPT",
+                         "detail": invalid[name]})
+            continue
         try:
-            record = receipt.read(path)
+            record = records[name]
             if record["command"] != command:
                 rows.append({"id": name, "status": "UNVERIFIED", "reason": "COMMAND_MISMATCH"})
                 continue
             observation = receipt.check_receipt(root, path)
-            # Reject a receipt replaced between the two required reads.
             if observation["receipt_sha256"] != record["payload_sha256"]:
                 rows.append({"id": name, "status": "UNVERIFIED",
                              "reason": "RECEIPT_CHANGED_DURING_GATE"})
@@ -150,27 +212,35 @@ def check(root: Path, policy_file: Path, evidence_file: Path,
         except (OSError, ValueError, KeyError, TypeError, receipt.handoff.HandoffError) as exc:
             rows.append({"id": name, "status": "UNVERIFIED", "reason": "INVALID_RECEIPT",
                          "detail": type(exc).__name__})
-    after = receipt.observe(root, [], None)
+
+    after = receipt.observe(root, observed, None)
     gate_drift = receipt.drift(before, after)
+    # Check each original Receipt file again after *all* calls to check_receipt.
+    # Earlier files may have been corrupted after their per-check validation.
+    input_drift = []
+    for name, old_fp in fingerprints.items():
+        try:
+            _, new_fp = read_snapshot(Path(supplied[name]), MAX_RECEIPT_BYTES)
+            if new_fp != old_fp:
+                input_drift.append("RECEIPT_CHANGED_DURING_GATE:" + name)
+        except InputError:
+            input_drift.append("RECEIPT_UNREADABLE_AFTER_CHECK:" + name)
     try:
         _, current_policy_digest = read_json(policy_file)
         _, current_evidence_digest = read_json(evidence_file)
-        input_drift = []
         if current_policy_digest != policy_digest:
             input_drift.append("POLICY_CHANGED_DURING_GATE")
         if current_evidence_digest != evidence_digest:
             input_drift.append("EVIDENCE_CHANGED_DURING_GATE")
     except (InputError, OSError):
-        input_drift = ["GATE_INPUT_UNREADABLE_AFTER_CHECK"]
+        input_drift.append("GATE_INPUT_UNREADABLE_AFTER_CHECK")
     passed = not gate_drift and not input_drift and all(row["status"] == "PASS" for row in rows)
-    return {
-        "schema_version": 1, "completion": "PASS" if passed else "BLOCKED",
-        "worktree_changed_during_gate": gate_drift,
-        "input_changed_during_gate": input_drift,
-        "policy_sha256": policy_digest, "evidence_sha256": evidence_digest,
-        "checks": rows,
-        "authority": "opt_in_coordinator_policy;not_native_hook;not_full_spec_compliance",
-    }, 0 if passed else 1
+    return {"schema_version": 1, "completion": "PASS" if passed else "BLOCKED",
+            "worktree_changed_during_gate": gate_drift,
+            "input_changed_during_gate": input_drift,
+            "policy_sha256": policy_digest, "evidence_sha256": evidence_digest,
+            "checks": rows, "authority": "opt_in_coordinator_policy;not_native_hook;not_full_spec_compliance"}, 0 if passed else 1
+
 
 
 def main() -> int:
