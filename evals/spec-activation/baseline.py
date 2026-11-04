@@ -27,6 +27,11 @@ MAX_ARCHIVE = 64 * 1024 * 1024
 MAX_EXPANDED = 128 * 1024 * 1024
 STATES = ("applicable", "context_only", "uncertain", "not_applicable", "unreviewed")
 ROUTER_OPERATIONS = frozenset({"candidates", "requirements"})
+# Schema 1 has one historical experiment. This is its role-bound archive entry,
+# not a caller-selected member of the source registry.
+HISTORICAL_CASE_ID = "historical-task3"
+HISTORICAL_DIFF_PATH = "frozen/final.diff"
+HISTORICAL_DIFF_SOURCE = "compliance-archive:" + HISTORICAL_DIFF_PATH
 
 
 class BaselineError(ValueError):
@@ -80,6 +85,31 @@ def relative(value: str, *, glob: bool = False) -> str:
     return value
 
 
+def final_diff_reference(case: dict) -> dict:
+    """Validate the fixed historical diff role, not just an arbitrary locator."""
+    ref = case.get("final_diff")
+    if (not isinstance(ref, dict) or set(ref) != {"source", "sha256"}
+            or ref["source"] != HISTORICAL_DIFF_SOURCE
+            or not isinstance(ref["sha256"], str)
+            or re.fullmatch(r"[0-9a-f]{64}", ref["sha256"]) is None):
+        raise BaselineError("Invalid historical final_diff reference")
+    return ref
+
+
+def bind_final_diff(history: dict, case: dict) -> dict:
+    """Cross-check the case declaration against the frozen history registry.
+
+    This proves metadata consistency only. verify_history must still read and
+    hash the original archive entry before claiming historical revalidation.
+    """
+    ref = final_diff_reference(case)
+    sources = history["recovered_experiment"]["sources"]
+    matches = [row for row in sources if row["path"] == HISTORICAL_DIFF_PATH]
+    if len(matches) != 1 or matches[0]["sha256"] != ref["sha256"]:
+        raise BaselineError("Historical final_diff registry binding mismatch")
+    return ref
+
+
 def validate_corpus(data: dict) -> None:
     if not isinstance(data, dict):
         raise BaselineError("Corpus must be an object")
@@ -87,6 +117,10 @@ def validate_corpus(data: dict) -> None:
         raise BaselineError("Unsupported corpus schema")
     if not isinstance(data["requirements"], dict) or not isinstance(data["cases"], list):
         raise BaselineError("Invalid requirement map or case list")
+    for name, ref in data["requirements"].items():
+        if not isinstance(ref, dict) or "source_path" not in ref:
+            raise BaselineError(f"Missing Requirement source_path: {name}")
+        relative(ref["source_path"])
     universe = set(data["requirements"])
     if not universe or not data["cases"]:
         raise BaselineError("Empty corpus")
@@ -96,6 +130,11 @@ def validate_corpus(data: dict) -> None:
         if not isinstance(name, str) or not re.fullmatch(r"[a-z][a-z0-9-]{0,63}", name) or name in seen:
             raise BaselineError("Invalid or duplicate case ID")
         seen.add(name)
+        if (name == HISTORICAL_CASE_ID or case.get("origin") == "source_audit_20261101"
+                or "final_diff" in case):
+            if name != HISTORICAL_CASE_ID:
+                raise BaselineError("Unsupported historical case identity")
+            final_diff_reference(case)
         if not case["task"].strip() or not case["planned_paths"] or not case["actual_paths"]:
             raise BaselineError(f"Incomplete task: {name}")
         for p in case["planned_paths"]:
@@ -208,12 +247,17 @@ def load_router(path: Path, expected: str):
 
 def verify_subject(root: Path, corpus: dict, router) -> None:
     pins = corpus["pins"]
+    pinned_bytes = {}
     for path, key in (("docs/.engineering/specs.lock.json", "lock_sha256"),
                       ("docs/.engineering/specs.json", "manifest_sha256"),
                       ("docs/agent-guides/managed/requirements.json", "index_sha256")):
-        if digest(read_bytes(root / path)) != pins[key]:
+        data = read_bytes(root / path)
+        if digest(data) != pins[key]:
             raise BaselineError(f"Subject pin drift: {path}")
+        pinned_bytes[key] = data
     state = router.load_state(root)
+    lock = json_bytes(pinned_bytes["lock_sha256"])
+    locked_sources = {spec["id"]: spec["source_path"] for spec in lock["specs"]}
     if (state.revision, state.catalog_version, state.catalog_digest) != (
         pins["catalog_revision"], pins["catalog_version"], pins["catalog_sha256"]
     ):
@@ -223,8 +267,9 @@ def verify_subject(root: Path, corpus: dict, router) -> None:
         raise BaselineError("Requirement universe mismatch")
     for name, ref in corpus["requirements"].items():
         item = actual[name]
-        if (item.spec_id, item.block.start_byte, item.block.end_byte, item.block.sha256) != (
-            ref["spec"], ref["start_byte"], ref["end_byte"], ref["sha256"]
+        if (item.spec_id, locked_sources.get(item.spec_id),
+                item.block.start_byte, item.block.end_byte, item.block.sha256) != (
+            ref["spec"], ref.get("source_path"), ref["start_byte"], ref["end_byte"], ref["sha256"]
         ):
             raise BaselineError(f"Requirement source drift: {name}")
 
@@ -254,6 +299,7 @@ def invoke(router_path: Path, subject: Path, operation: str, paths: list[str],
 
 
 def verify_history(archive: Path, history: dict, case: dict) -> dict:
+    diff_ref = bind_final_diff(history, case)
     expected = history["recovered_experiment"]
     if digest(read_bytes(archive, MAX_ARCHIVE)) != expected["archive_sha256"]:
         raise BaselineError("Historical archive digest mismatch")
@@ -272,6 +318,9 @@ def verify_history(archive: Path, history: dict, case: dict) -> dict:
         for ref in expected["sources"]:
             if digest(z.read(ref["path"])) != ref["sha256"]:
                 raise BaselineError("Historical source reference drift")
+        # The case, registry and actual entry must identify the same bytes.
+        if digest(z.read(HISTORICAL_DIFF_PATH)) != diff_ref["sha256"]:
+            raise BaselineError("Historical case final_diff bytes mismatch")
         matrix = json_bytes(z.read("audit/compliance-matrix.json"))
         counts = dict(Counter(r["result"] for r in matrix["requirements"]))
         activation_log = json_bytes(z.read("evidence/coder-014-router-activate-reviewed-budget.json"))
@@ -291,6 +340,13 @@ def measure(corpus: dict, fixture: Path, router_path: Path, output: Path,
             *, repeats: int = 2, audit_archive: Path | None = None, history: dict | None = None,
             frozen_inputs: dict[Path, bytes] | None = None) -> dict:
     validate_corpus(corpus)
+    historical_case = next((c for c in corpus["cases"] if c["id"] == HISTORICAL_CASE_ID), None)
+    if historical_case is not None:
+        if history is None:
+            raise BaselineError("Historical source registry is required")
+        bind_final_diff(history, historical_case)
+    if audit_archive is not None and historical_case is None:
+        raise BaselineError("Historical case is required for archive revalidation")
     if repeats != 2:
         raise BaselineError("This frozen protocol requires exactly two deterministic repeats")
     router = load_router(router_path, corpus["pins"]["router_sha256"])
@@ -353,9 +409,7 @@ def measure(corpus: dict, fixture: Path, router_path: Path, output: Path,
         raise BaselineError("Router changed during measurement")
     historical = {"status": "NOT_REVALIDATED", "reason": "Original archive not supplied"}
     if audit_archive is not None:
-        if history is None:
-            raise BaselineError("Historical source registry is required")
-        historical = verify_history(audit_archive, history, next(c for c in corpus["cases"] if c["id"] == "historical-task3"))
+        historical = verify_history(audit_archive, history, historical_case)
     result = {"schema_version": 1, "measurement_status": "complete", "read_only": True,
               "router_revision": corpus["pins"]["router_revision"], "router_sha256": corpus["pins"]["router_sha256"],
               "corpus_sha256": digest(canonical(corpus)), "pins": corpus["pins"],

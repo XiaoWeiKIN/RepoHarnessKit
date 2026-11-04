@@ -12,6 +12,7 @@ import sys
 import tarfile
 import tempfile
 import unittest
+import zipfile
 from unittest.mock import patch
 
 from tests.spec_git_fixture import create_git_catalog, git
@@ -144,6 +145,118 @@ class CorpusTests(unittest.TestCase):
                     BASELINE.extract_fixture(tar, sha(tar), home / "output")
 
 
+class HistoricalProvenanceTests(unittest.TestCase):
+    """Small real ZIPs exercise bindings, not the private audit's semantics."""
+
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.home = Path(tmp.name).resolve()
+        self.archive = self.home / "audit.zip"
+        self.payloads = {
+            "frozen/final.diff": b"diff --git a/a.go b/a.go\n-old\n+new\n",
+            "REPORT.md": b"A different registered source, not the final diff.\n",
+            "audit/compliance-matrix.json": BASELINE.canonical({
+                "requirements": [{"result": "PASS"}],
+                "missing_applicable_requirements": []}),
+            "evidence/coder-014-router-activate-reviewed-budget.json": BASELINE.canonical({
+                "stdout": json.dumps({"resolved_requirements": [{"id": "REQ-001"}]})}),
+        }
+        self.manifest = {"files": [
+            {"path": path, "size_bytes": len(data), "sha256": BASELINE.digest(data)}
+            for path, data in sorted(self.payloads.items())]}
+        self.write_archive()
+        self.history = {"recovered_experiment": {
+            "archive_sha256": sha(self.archive),
+            "sources": [{"path": path, "sha256": BASELINE.digest(data)}
+                        for path, data in self.payloads.items()],
+            "counts_preserved": {"PASS": 1}, "resolved_selected": ["REQ-001"]}}
+        self.case = {"id": "historical-task3", "origin": "source_audit_20261101",
+                     "final_diff": {"source": "compliance-archive:frozen/final.diff",
+                                    "sha256": BASELINE.digest(self.payloads["frozen/final.diff"])},
+                     "labels": {"applicable": {"REQ-001": "synthetic control"},
+                                "context_only": [], "uncertain": {},
+                                "not_applicable": [], "unreviewed": []}}
+
+    def write_archive(self):
+        with zipfile.ZipFile(self.archive, "w") as output:
+            for path, data in self.payloads.items():
+                output.writestr(path, data)
+            output.writestr("SHA256_MANIFEST.json", BASELINE.canonical(self.manifest))
+
+    def verify(self):
+        return BASELINE.verify_history(self.archive, self.history, self.case)
+
+    def test_valid_final_diff_binding_is_verified(self):
+        result = self.verify()
+        self.assertEqual(result["verified_payloads"], 4)
+        self.assertEqual(result["counts_preserved"], {"PASS": 1})
+
+    def test_case_final_diff_digest_mismatch_rejected(self):
+        self.case["final_diff"]["sha256"] = "0" * 64
+        with self.assertRaises(BASELINE.BaselineError):
+            self.verify()
+
+    def test_case_final_diff_nonexistent_source_rejected(self):
+        self.case["final_diff"]["source"] = "compliance-archive:frozen/missing.diff"
+        with self.assertRaises(BASELINE.BaselineError):
+            self.verify()
+
+    def test_other_registered_source_cannot_substitute_for_final_diff(self):
+        self.case["final_diff"] = {"source": "compliance-archive:REPORT.md",
+                                   "sha256": BASELINE.digest(self.payloads["REPORT.md"])}
+        with self.assertRaises(BASELINE.BaselineError):
+            self.verify()
+
+    def test_missing_or_malformed_final_diff_rejected(self):
+        for value in (None, {}, "frozen/final.diff", {"source": "compliance-archive:frozen/final.diff"}):
+            with self.subTest(value=value):
+                self.case["final_diff"] = value
+                with self.assertRaises(BASELINE.BaselineError):
+                    self.verify()
+
+    def test_noncanonical_and_foreign_diff_locators_rejected(self):
+        for source in ("frozen/final.diff", "other-archive:frozen/final.diff",
+                       "compliance-archive:../frozen/final.diff",
+                       "compliance-archive:frozen/./final.diff"):
+            with self.subTest(source=source):
+                self.case["final_diff"]["source"] = source
+                with self.assertRaises(BASELINE.BaselineError):
+                    self.verify()
+
+    def test_duplicate_final_diff_registry_entry_rejected(self):
+        self.history["recovered_experiment"]["sources"].append(
+            copy.deepcopy(self.history["recovered_experiment"]["sources"][0]))
+        with self.assertRaises(BASELINE.BaselineError):
+            self.verify()
+
+    def test_unregistered_final_diff_rejected(self):
+        self.history["recovered_experiment"]["sources"] = [
+            row for row in self.history["recovered_experiment"]["sources"]
+            if row["path"] != "frozen/final.diff"]
+        with self.assertRaises(BASELINE.BaselineError):
+            self.verify()
+
+    def test_matching_declarations_do_not_replace_archive_byte_verification(self):
+        # Both declarations agree, but the actual diff does not have this digest.
+        self.case["final_diff"]["sha256"] = "0" * 64
+        self.history["recovered_experiment"]["sources"][0]["sha256"] = "0" * 64
+        with self.assertRaises(BASELINE.BaselineError):
+            self.verify()
+
+    def test_changed_archive_pin_rejected(self):
+        self.history["recovered_experiment"]["archive_sha256"] = "0" * 64
+        with self.assertRaises(BASELINE.BaselineError):
+            self.verify()
+
+    def test_rehashed_zip_with_changed_diff_and_old_manifest_rejected(self):
+        self.payloads["frozen/final.diff"] += b"changed\n"
+        self.write_archive()
+        self.history["recovered_experiment"]["archive_sha256"] = sha(self.archive)
+        with self.assertRaises(BASELINE.BaselineError):
+            self.verify()
+
+
 class RouterIntegrationTests(unittest.TestCase):
     """Use the unmodified real Router with existing synthetic Catalog plumbing."""
 
@@ -153,6 +266,7 @@ class RouterIntegrationTests(unittest.TestCase):
         self.home = Path(tmp.name).resolve()
         catalog, _ = create_git_catalog(self.home)
         project = self.home / "project"
+        self.project = project
         project.mkdir()
         git(project, "init", "-b", "main")
         (project / "go.mod").write_text("module example.test/baseline\n")
@@ -217,6 +331,75 @@ class RouterIntegrationTests(unittest.TestCase):
         with self.assertRaises(BASELINE.BaselineError):
             BASELINE.measure(self.corpus, self.fixture, self.router, output)
         self.assertFalse((output / "observations.json").exists())
+
+
+    def test_requirement_source_path_mismatch_rejected_before_router_calls(self):
+        next(iter(self.corpus["requirements"].values()))["source_path"] = "specification/nonexistent.md"
+        output = self.home / "bad-source"
+        with patch.object(BASELINE, "invoke") as invoke:
+            with self.assertRaises(BASELINE.BaselineError):
+                BASELINE.measure(self.corpus, self.fixture, self.router, output)
+            invoke.assert_not_called()
+        self.assertFalse((output / "observations.json").exists())
+
+    def test_requirement_source_spec_mismatch_rejected(self):
+        ref = next(iter(self.corpus["requirements"].values()))
+        ref["spec"] = "languages/go"
+        router = BASELINE.load_router(self.router, self.corpus["pins"]["router_sha256"])
+        with self.assertRaises(BASELINE.BaselineError):
+            BASELINE.verify_subject(self.project, self.corpus, router)
+
+    def test_missing_requirement_source_path_rejected(self):
+        del next(iter(self.corpus["requirements"].values()))["source_path"]
+        with self.assertRaises(BASELINE.BaselineError):
+            BASELINE.validate_corpus(self.corpus)
+
+    def test_noncanonical_requirement_source_path_rejected(self):
+        ref = next(iter(self.corpus["requirements"].values()))
+        for value in ("../specification/file.md", "/specification/file.md",
+                      "specification/./file.md", None):
+            with self.subTest(value=value):
+                ref["source_path"] = value
+                with self.assertRaises(BASELINE.BaselineError):
+                    BASELINE.validate_corpus(self.corpus)
+
+    def historical_metadata(self):
+        case = self.corpus["cases"][0]
+        case.update(id="historical-task3", origin="source_audit_20261101", final_diff={
+            "source": "compliance-archive:frozen/final.diff", "sha256": "a" * 64})
+        return {"recovered_experiment": {"sources": [
+            {"path": "frozen/final.diff", "sha256": "a" * 64}]}, "unresolved_claims": []}
+
+    def test_no_archive_still_rejects_diff_metadata_mismatch(self):
+        history = self.historical_metadata()
+        self.corpus["cases"][0]["final_diff"]["sha256"] = "b" * 64
+        output = self.home / "bad-history"
+        with patch.object(BASELINE, "invoke") as invoke:
+            with self.assertRaises(BASELINE.BaselineError):
+                BASELINE.measure(self.corpus, self.fixture, self.router, output, history=history)
+            invoke.assert_not_called()
+        self.assertFalse((output / "observations.json").exists())
+
+    def test_no_archive_does_not_claim_verified_diff_bytes(self):
+        result = BASELINE.measure(self.corpus, self.fixture, self.router, self.home / "no-history",
+                                  history=self.historical_metadata())
+        self.assertEqual(result["historical_recheck"]["status"], "NOT_REVALIDATED")
+        self.assertIsNone(result["activation_metrics"]["recall"])
+
+    def test_historical_case_requires_registry_even_without_archive(self):
+        self.historical_metadata()
+        output = self.home / "missing-registry"
+        with patch.object(BASELINE, "invoke") as invoke:
+            with self.assertRaises(BASELINE.BaselineError):
+                BASELINE.measure(self.corpus, self.fixture, self.router, output)
+            invoke.assert_not_called()
+        self.assertFalse((output / "observations.json").exists())
+
+    def test_historical_case_cannot_drop_final_diff(self):
+        self.historical_metadata()
+        del self.corpus["cases"][0]["final_diff"]
+        with self.assertRaises(BASELINE.BaselineError):
+            BASELINE.validate_corpus(self.corpus)
 
 
 if __name__ == "__main__":

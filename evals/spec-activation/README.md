@@ -48,6 +48,26 @@ applicability rather than silently promoted to ground truth. Changing labels
 requires a new frozen measurement; do not edit sealed Benchmark artifacts.
 For readable JSON inspection, use `python3 -m json.tool corpus.json`.
 
+## Source-binding validation
+
+Requirement `source_path` is mandatory and must match the upstream source path
+for the same Spec in the digest-pinned lock. The evaluator checks this together
+with the Requirement ID, owning Spec, byte range and block digest before Router
+calls. An unrelated path is not valid merely because a block hash matches.
+
+Schema 1 binds the historical Task 3 case to
+`compliance-archive:frozen/final.diff`. The case digest must match the unique
+entry for that role in the history registry. This metadata check also runs when
+`--audit-archive` is omitted. When the original archive is supplied, its pin,
+manifest and actual diff bytes must match as well. Without the archive,
+historical revalidation remains `NOT_REVALIDATED`; consistent declarations are
+not proof that the original bytes were re-read.
+
+Invalid bindings exit 2 without a complete `observations.json`. A partial output
+directory or log is not a completed measurement. The
+[source-binding repair record](repairs/20261104-provenance-binding/README.md)
+records the regressions without changing the provisional labels or old Runs.
+
 ## Reproduce
 
 Use a checkout containing this evaluation and Python 3.10+. No network is used

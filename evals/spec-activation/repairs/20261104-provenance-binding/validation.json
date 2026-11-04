@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "scope": "Local regression verification for PR111 evaluator source bindings",
+  "parent_head": "8c5c42a82a8f7cd8472b09ca9e78e18fe0faf264",
+  "base_main": "4c56912785f498232c69722bd6327b92aaed4a04",
+  "source_sha256": {
+    "evals/spec-activation/baseline.py": "5de1581ec0da3991afa1964b69c75029239498af4171bf86dab01ad99eda017b",
+    "tests/test_activation_baseline.py": "67e07f97aa1174c43ece3b398be1c5e9c39c9a72ceb6e687920c5a30538cf1da"
+  },
+  "python": "3.13.5",
+  "platform": "Linux x86_64",
+  "focused_tests": {
+    "command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "tests.test_activation_baseline",
+      "-v"
+    ],
+    "tests": 38,
+    "new_tests": 19,
+    "exit_code": 0,
+    "finished_utc": "2026-11-04T02:10:22.979583+00:00",
+    "log_sha256": "e227810f910345cfd44e3a38a08c84b6331398ff11540fe45d49b888828c3da0"
+  },
+  "red_controls_on_parent": {
+    "tests": 4,
+    "passed_valid_control": 1,
+    "failed_rejection_assertions": 3,
+    "exit_code": 1,
+    "log_sha256": "13c3acb3a9c851c61e6f0a09aafe012f964478b9bcd8d71f5e69c0b36848f83a"
+  },
+  "real_source_controls": {
+    "expected_outcomes": 13,
+    "controls": 13,
+    "exit_code": 0,
+    "record": "controls.json",
+    "private_log_sha256": "e0b9beca23b95d2dda072198198bae1a1a244814c2b0346b54d776aa07e604d3"
+  },
+  "real_cli_controls": {
+    "invalid_inputs": 3,
+    "expected_exit_code": 2,
+    "complete_artifacts": 0,
+    "router_calls": 0
+  },
+  "canonical": {
+    "command": [
+      "python3",
+      "-B",
+      "scripts/check.py"
+    ],
+    "environment": {
+      "RF_RELEASE_BASE": "4c56912785f498232c69722bd6327b92aaed4a04"
+    },
+    "exit_code": 1,
+    "reason": "Engineering Execution Plan suite exceeded the unchanged 600-second timeout",
+    "passed_test_suites": {
+      "previous_distribution_upgrade": 2,
+      "research": 35,
+      "benchmark": 20,
+      "design": 18
+    },
+    "later_stages": "NOT_RUN by this canonical invocation",
+    "started_utc": "2026-11-04T01:56:59.159388+00:00",
+    "finished_utc": "2026-11-04T02:11:22.280385+00:00",
+    "stdout_sha256": "5fcbef4aad17a3f824e23d2ac4753173c51356c86ee6595d31783cc55fd8f397",
+    "stderr_sha256": "6bb82e688b3f51d8ff7f22e0ab290d16284a70b7b0732b680cfe4cb6d3ebb67d"
+  },
+  "release_contract": {
+    "command": [
+      "python3",
+      "-B",
+      "scripts/check_release.py",
+      "--base-ref",
+      "4c56912785f498232c69722bd6327b92aaed4a04"
+    ],
+    "exit_code": 0,
+    "changed_owner_templates": [],
+    "version_bump_required": false,
+    "stdout_sha256": "1e30349583482ed3d754d6e5d7eaf5b7309c3c12d826c2a22aa64128466f7f73"
+  },
+  "supplemental_checks": {
+    "benchmark_manifests": "PASS",
+    "markdown_skill_eval_ownership_and_indexes": "PASS",
+    "repository_validation": {
+      "research_errors": 0,
+      "ep_errors": 0,
+      "ep_warnings": 6,
+      "design_errors": 0,
+      "design_warnings": 1
+    },
+    "post_document_stdout_sha256": "4d4cc098177141f3ccfaa2f47518d83a00f5da2d973d5d52d2d4798f1c66477d",
+    "repository_validator_stdout_sha256": "ddd8242f85ccca0bdbcadfb224d89cd94896201a1e30e2e1e1f804d29ea37e8b",
+    "repository_validator_stderr_sha256": "5f37429456d94b3e219bf784251282d127dde3cd9a3172720bd7254a140f295f"
+  },
+  "preservation": {
+    "protected_tracked_files_checked": 50,
+    "unchanged": true,
+    "corpus_sha256": "897a792aee32010a45060d1b26846fcf6c8dec27783868405314c9d6519c3796",
+    "history_sha256": "998c59173f10f467b3470096f6ae6a71e40a98d7bd9668cc5a9848248427a579",
+    "production_router_sha256": "5dae7936f1e259565720ea9b9f23bb7d45265c1d9cc07488481ecaecba5fbf1e",
+    "original_private_archives": "unchanged; not copied into public Git"
+  },
+  "ci": "Check the new exact-head GitHub runs; parent CI is not evidence for this repair.",
+  "not_claimed": [
+    "Canonical PASS",
+    "Independent Gold Set acceptance",
+    "Semantic label changes",
+    "New Recall or Precision",
+    "Agent execution",
+    "Native Hook enforcement",
+    "Merge approval"
+  ]
+}
