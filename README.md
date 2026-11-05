@@ -51,10 +51,10 @@ system that makes those workflows composable and verifiable.
 |---|---|---|
 | [`repo-foundry-ai`](./SKILL.md) | Inspect, Bootstrap, synchronize Specs, validate the Harness, and route work | `AGENTS.md`, architecture and docs maps, Harness and Spec manifests |
 | [`architecture-design`](./architecture-design/SKILL.md) | Design and audit real architecture boundaries, complexity ownership, deep modules and change propagation | Evidence-backed options, findings and falsifiable change scenarios; no mandatory document or DD lifecycle |
-| [`detailed-design`](./detailed-design/SKILL.md) | Co-author and review Architecture, Internals, module designs, and implementation contracts from repository evidence | One focused Markdown document by default; no DD lifecycle artifacts |
+| [`design-documentation`](./design-documentation/SKILL.md) | Co-author and review Architecture, Internals, module designs, and implementation contracts from repository evidence | One focused Markdown document by default; no DD lifecycle artifacts |
 | [`engineering-benchmark`](./engineering-benchmark/SKILL.md) | Collaboratively calibrate, then execute reproducible measurement | Suite, Scenario, Run, Result, sealed Evidence Manifest |
 | [`engineering-research`](./engineering-research/SKILL.md) | Collaboratively steer unknowns and synthesize multi-document evidence | Research controller, corpus Manifest, Rounds, topics, sealed Synthesis |
-| [`engineering-design`](./engineering-design/SKILL.md) | Explore trade-offs and translate established evidence into a reviewable design | Single-file or multi-document Design Package, reading map, manifest, approved revision snapshot |
+| [`governed-design`](./governed-design/SKILL.md) | Explore trade-offs and translate established evidence into a reviewable design | Single-file or multi-document Design Package, reading map, manifest, approved revision snapshot |
 | [`engineering-execution-plan`](./engineering-execution-plan/SKILL.md) | Deliberate ADRs and align governed implementation | ADR, ExecPlan, Task, Checkpoint, Bugfix, technical debt |
 | [`engineering-case-study`](./engineering-case-study/SKILL.md) | Turn verified code and process evidence into a shareable narrative | Chinese, English, or bilingual engineering case study |
 
@@ -496,7 +496,7 @@ Harness and local Specs.
 Route specialized work:
 
 ```text
-Use $detailed-design to build a system mental model from code and existing
+Use $design-documentation to build a system mental model from code and existing
 documents, then write one architecture document around real flows, core
 abstractions, boundaries, and source mappings.
 
@@ -507,7 +507,7 @@ Use $engineering-research to collaboratively steer the cache-topology questions
 and evidence branches, preserve counterevidence, and stop at review-ready
 Synthesis.
 
-Use $engineering-design to collaboratively explore material trade-offs, then
+Use $governed-design to collaboratively explore material trade-offs, then
 translate confirmed inputs into a technical Design Package with explicit
 boundaries, contracts, failure behavior, and a reviewable revision.
 
@@ -532,10 +532,10 @@ standalone entrypoints and as evidence handoffs:
 | Situation | First Skill |
 |---|---|
 | Initialize a repository or route an ambiguous request | `$repo-foundry-ai` |
-| Write or review Architecture, Internals, module design, or implementation contracts | `$detailed-design` |
+| Write or review Architecture, Internals, module design, or implementation contracts | `$design-documentation` |
 | Produce reproducible measurements | `$engineering-benchmark` |
 | Investigate unknowns or adopt an existing corpus | `$engineering-research` |
-| Create or revise a technical Design Package | `$engineering-design` |
+| Create or revise a technical Design Package | `$governed-design` |
 | Record a decision or drive delivery | `$engineering-execution-plan` |
 | Write a shareable engineering narrative | `$engineering-case-study` |
 
@@ -552,7 +552,7 @@ directly for automation or diagnosis:
 REPO_FOUNDRY_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/repofoundry-ai/current"
 BENCHCTL="$REPO_FOUNDRY_HOME/engineering-benchmark/scripts/benchctl.py"
 RESEARCHCTL="$REPO_FOUNDRY_HOME/engineering-research/scripts/researchctl.py"
-DESIGNCTL="$REPO_FOUNDRY_HOME/engineering-design/scripts/designctl.py"
+DESIGNCTL="$REPO_FOUNDRY_HOME/governed-design/scripts/designctl.py"
 EPCTL="$REPO_FOUNDRY_HOME/engineering-execution-plan/scripts/epctl.py"
 
 repofoundry --version
@@ -785,17 +785,17 @@ RepoHarnessKit:
 
 Professional capabilities:
 
-- [Architecture documentation method](./detailed-design/references/architecture.md)
-- [Module and implementation-contract method](./detailed-design/references/module-contract.md)
-- [Detailed design review](./detailed-design/references/review.md)
+- [Architecture documentation method](./design-documentation/references/architecture.md)
+- [Module and implementation-contract method](./design-documentation/references/module-contract.md)
+- [Detailed design review](./design-documentation/references/review.md)
 - [Benchmark contract](./engineering-benchmark/references/contract.md)
 - [Benchmark Scenario collaboration](./engineering-benchmark/references/collaboration.md)
 - [Research method](./engineering-research/references/research.md)
 - [Research manifest](./engineering-research/references/manifest.md)
 - [Research collaboration](./engineering-research/references/collaboration.md)
-- [Technical Design contract](./engineering-design/references/contract.md)
-- [Technical Design review](./engineering-design/references/review.md)
-- [Interactive Design exploration](./engineering-design/references/exploration.md)
+- [Technical Design contract](./governed-design/references/contract.md)
+- [Technical Design review](./governed-design/references/review.md)
+- [Interactive Design exploration](./governed-design/references/exploration.md)
 - [Execution artifact routing](./engineering-execution-plan/references/templates.md)
 - [Architecture Decision Records](./engineering-execution-plan/references/adr.md)
 - [ExecPlan specification](./engineering-execution-plan/references/template.md)

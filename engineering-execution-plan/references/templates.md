@@ -8,7 +8,7 @@
 | Bugfix | 用户明确要求记录局部既有行为缺陷 | 保存问题闭环和验证证据 |
 | Research | 决策相关事实不清，需要比较、实验或外部证据 | 由 `engineering-research` 把未知转成可追溯 corpus |
 | Synthesis | Research 已具备决策输入 | 作为两个 Skill 之间的有界、sealed 契约 |
-| Design Package | 已建立证据需要转成系统边界、组件、接口、数据与失败语义 | 由 `engineering-design` 管理单文件或多文档设计、评审与 approved revision |
+| Design Package | 已建立证据需要转成系统边界、组件、接口、数据与失败语义 | 由 `governed-design` 管理单文件或多文档设计、评审与 approved revision |
 | ADR | 架构级选择会形成长期约束 | 保存选择、后果和确认方式 |
 | ExecPlan | 已知方向需要跨模块、多里程碑或跨会话实施 | 让无历史会话的 Agent 可执行 |
 
@@ -24,7 +24,7 @@ flowchart TD
     U -->|"是"| R["engineering-research<br/>Research + Synthesis"]
     U -->|"否，记录理由"| A
     R -.-> D{"需要显式技术设计？"}
-    D -->|"是"| DD["engineering-design<br/>Design Package"]
+    D -->|"是"| DD["governed-design<br/>Design Package"]
     DD --> A
     D -->|"否"| A{"架构级选择？"}
     A -->|"是"| ADR["Proposed ADR → 明确决定"]
@@ -48,7 +48,7 @@ flowchart TD
 不负责证据采集或 corpus authoring。
 
 需要创建、评审、修订、放弃或替代 Design Package 时切换到独立的
-`engineering-design` Skill。本 Skill 只读消费其版本化 repository contract；
+`governed-design` Skill。本 Skill 只读消费其版本化 repository contract；
 不得通过 `epctl` 改变 Design 生命周期。
 
 可跳过 Research：

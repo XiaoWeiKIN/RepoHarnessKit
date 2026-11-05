@@ -13,10 +13,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 GUIDE = Path("references/controlled-writing.md")
 SKILLS = (
-    "detailed-design",
+    "design-documentation",
     "engineering-benchmark",
     "engineering-research",
-    "engineering-design",
+    "governed-design",
     "engineering-execution-plan",
     "engineering-case-study",
 )

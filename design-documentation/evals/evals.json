@@ -1,5 +1,5 @@
 {
-  "skill_name": "detailed-design",
+  "skill_name": "design-documentation",
   "evals": [
     {
       "id": 1,
@@ -52,12 +52,12 @@
     {
       "id": 4,
       "prompt": "把这份架构文档登记成 DD-012，生成 manifest，进入 review_ready。",
-      "expected_output": "Routes governed DD identity, manifest, and lifecycle work to engineering-design instead of inventing those mechanics inside detailed-design.",
+      "expected_output": "Routes governed DD identity, manifest, and lifecycle work to governed-design instead of inventing those mechanics inside design-documentation.",
       "files": [],
       "assertions": [
         {
           "name": "governance-boundary",
-          "description": "Hands explicit DD lifecycle work to engineering-design."
+          "description": "Hands explicit DD lifecycle work to governed-design."
         }
       ]
     },

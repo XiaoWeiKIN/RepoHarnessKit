@@ -1,4 +1,0 @@
-interface:
-  display_name: "Detailed Design"
-  short_description: "Co-author and review technical architecture documents"
-  default_prompt: "Use $detailed-design to turn repository evidence into a clear architecture document organized around mental models, system flows, boundaries, and code mappings."

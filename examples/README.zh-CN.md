@@ -12,7 +12,7 @@ flowchart LR
     U["用户 Prompt"] --> W["$repo-foundry-ai<br/>初始化或路由"]
     W --> B["$engineering-benchmark<br/>测量"]
     W --> R["$engineering-research<br/>解释未知"]
-    W --> D["$engineering-design<br/>定义系统"]
+    W --> D["$governed-design<br/>定义系统"]
     W --> E["$engineering-execution-plan<br/>决策与交付"]
     W --> C["$engineering-case-study<br/>分享"]
     B -->|"结果可能改变路线"| R
@@ -31,7 +31,7 @@ flowchart LR
 | 初始化 Agent-first 仓库，或判断请求应由谁负责 | `$repo-foundry-ai` | 路由到一个专业 Skill |
 | 产生可复现的性能、容量、可靠性或回归证据 | `$engineering-benchmark` | Research、EP 或 CI / Runbook |
 | 调研未知、解释多来源证据、维护 Research corpus | `$engineering-research` | proposed ADR 或下一轮 Research |
-| 把已建立证据翻译成系统边界、契约、数据、流程和失败语义 | `$engineering-design` | Design 评审、ADR 对齐或 ExecPlan |
+| 把已建立证据翻译成系统边界、契约、数据、流程和失败语义 | `$governed-design` | Design 评审、ADR 对齐或 ExecPlan |
 | 记录决定、创建 ExecPlan、维护 Bugfix 或推动实施 | `$engineering-execution-plan` | Benchmark 门禁与完成证据 |
 | 把已验证工程工作整理成可分享文章 | `$engineering-case-study` | 草稿评审与显式发布验证 |
 
@@ -65,7 +65,7 @@ Research、Design、Execution Plan 或 Case Study 创建专业制品。
 “存储迁移后 p95 上升了。我需要判断架构是否有问题，然后修复。”
 
 检查现有证据，判断应该从 $engineering-benchmark、
-$engineering-research、$engineering-design 还是 $engineering-execution-plan 开始。
+$engineering-research、$governed-design 还是 $engineering-execution-plan 开始。
 解释选择依据和预期制品，但暂时不要创建任何持久专业制品。
 ```
 
@@ -119,7 +119,7 @@ active ExecPlan 是五个独立状态，授权也互不替代。
 当多篇聚焦文档必须作为一个整体评审和发布时，使用一个逻辑 Design Package：
 
 ```text
-使用 $engineering-design，把 concluded R-012 转成 UModel 模块技术设计。
+使用 $governed-design，把 concluded R-012 转成 UModel 模块技术设计。
 用 DESIGN.md 承担架构总览，只把贡献者确实需要独立阅读的专题组织到
 how-it-works、core-concepts、subsystems、extension-points、deep-dives 或
 contributor-guide；它们共享一个 DD-NNN 评审边界和根 README 阅读地图。
@@ -230,8 +230,8 @@ query semantics。
 |---|---|---|
 | `$repo-foundry-ai` | 仓库会发生什么变化，哪些定制被保留或冲突 | 预览动作、路径、验证结果 |
 | `$engineering-research` | 问题的答案、置信边界、会改变推荐的证据 | 连续分析、反例、证据索引 |
-| `$detailed-design` | 系统如何工作、关键边界与取舍 | 代表性流程、代码与测试映射 |
-| `$engineering-design` | 本次设计形态、代价、相对明确修订的变化 | 阅读地图、失败场景、精确批准版本 |
+| `$design-documentation` | 系统如何工作、关键边界与取舍 | 代表性流程、代码与测试映射 |
+| `$governed-design` | 本次设计形态、代价、相对明确修订的变化 | 阅读地图、失败场景、精确批准版本 |
 | `$engineering-benchmark` | 规则判定、负载条件、不确定性和外推边界 | 可比性、原始样本、诊断与统计方法 |
 | `$engineering-execution-plan` | 行为变化、实际验证、剩余缺口和下一步 | 约束映射、验收记录、回滚路径 |
 | `$engineering-case-study` | 可复用判断与采用条件 | 机制、关键转折、版本化证据 |

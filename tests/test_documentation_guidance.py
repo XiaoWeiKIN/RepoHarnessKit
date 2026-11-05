@@ -13,8 +13,8 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 GUIDE = Path("references/controlled-writing.md")
 SKILLS = (
-    "detailed-design", "engineering-benchmark", "engineering-research",
-    "engineering-design", "engineering-execution-plan", "engineering-case-study",
+    "design-documentation", "engineering-benchmark", "engineering-research",
+    "governed-design", "engineering-execution-plan", "engineering-case-study",
 )
 SHARED_SECTIONS = (
     "Editorial basis and precedence", "Language and fidelity", "Common guidance",
@@ -92,7 +92,7 @@ class DocumentationGuidanceTests(unittest.TestCase):
             self.assertIn(url, text)
 
     def test_detailed_design_routes_shared_rules_and_final_reader_review(self) -> None:
-        skill = (ROOT / "detailed-design/SKILL.md").read_text(encoding="utf-8")
+        skill = (ROOT / "design-documentation/SKILL.md").read_text(encoding="utf-8")
         route = "[受控技术写作](references/controlled-writing.md)"
         self.assertEqual(skill.count(route), 1)
         self.assertLess(skill.index(route), skill.index("\n## "))
@@ -100,19 +100,19 @@ class DocumentationGuidanceTests(unittest.TestCase):
         self.assertIn("读完后需要理解或完成的任务", skill)
         self.assertIn("写作、修订和评审交付前都读取 [review.md](references/review.md)", skill)
         for filename in ("architecture.md", "review.md"):
-            path = ROOT / "detailed-design/references" / filename
+            path = ROOT / "design-documentation/references" / filename
             with self.subTest(filename=filename):
                 text = path.read_text(encoding="utf-8")
                 self.assertIn("[controlled technical writing](controlled-writing.md)", text)
                 self.assertTrue((path.parent / "controlled-writing.md").is_file())
                 self.assertNotIn("https://developers.google.com", text)
-        review = (ROOT / "detailed-design/references/review.md").read_text(encoding="utf-8")
+        review = (ROOT / "design-documentation/references/review.md").read_text(encoding="utf-8")
         self.assertIn("findings, not file modifications", review)
         self.assertIn("Separate editorial suggestions from factual or design defects.", review)
 
     def test_eval_catalog_preserves_scenarios_for_risky_editorial_changes(self) -> None:
-        catalog = json.loads((ROOT / "detailed-design/evals/evals.json").read_text(encoding="utf-8"))
-        self.assertEqual(catalog["skill_name"], "detailed-design")
+        catalog = json.loads((ROOT / "design-documentation/evals/evals.json").read_text(encoding="utf-8"))
+        self.assertEqual(catalog["skill_name"], "design-documentation")
         ids = [item["id"] for item in catalog["evals"]]
         self.assertEqual(len(ids), len(set(ids)))
         self.assertTrue(set(range(1, 10)).issubset(ids))

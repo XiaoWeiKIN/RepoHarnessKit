@@ -52,10 +52,10 @@ Spec 可选集合由用户选择。预览出现 `selection_decision.status=requi
 | 用户需要的结果 | Skill |
 |---|---|
 | 设计/审计真实系统的模块边界、复杂度归属、信息隐藏及变化传播 | `architecture-design` |
-| 普通 Architecture、Internals、模块设计或实现合同的撰写与评审 | `detailed-design` |
+| 普通 Architecture、Internals、模块设计或实现合同的撰写与评审 | `design-documentation` |
 | 预声明 Scenario、执行并封存可复用测量 | `engineering-benchmark` |
 | 为决策未知维护 Research、专题证据与 Synthesis | `engineering-research` |
-| 创建、评审或修订受治理的 DD-NNN / Design Package | `engineering-design` |
+| 创建、评审或修订受治理的 DD-NNN / Design Package | `governed-design` |
 | ADR、ExecPlan、Task、Checkpoint、Bugfix 或 ADR 历史维护 | `engineering-execution-plan` |
 | 用户明确要求的工程分享文章 | `engineering-case-study` |
 

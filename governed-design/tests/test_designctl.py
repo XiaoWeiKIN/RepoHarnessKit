@@ -676,7 +676,7 @@ class DesignctlTestCase(unittest.TestCase):
 
     def test_skill_runs_after_independent_copy(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            copied = Path(temporary) / "engineering-design"
+            copied = Path(temporary) / "governed-design"
             shutil.copytree(ROOT, copied)
             repository = Path(temporary) / "repository"
             repository.mkdir()
