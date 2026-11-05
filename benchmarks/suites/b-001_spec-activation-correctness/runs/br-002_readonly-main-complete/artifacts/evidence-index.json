@@ -1,0 +1,14 @@
+{
+  "raw_commands": {
+    "name": "commands.jsonl",
+    "sha256": "a19d6eec47c7c5243b6bf15752cf9ecb9e450d6360f0276219ec0736c145efb4",
+    "bytes": 1016712,
+    "count": 204,
+    "nonzero_exits": 0,
+    "retention": "Private task reproduction bundle; includes normative text and temporary paths, not published in Git."
+  },
+  "decompressed_observations_sha256": "02911715570f37413359b68aa1cdf741c4fd7ef80102653d1bfdaf86aaa21b78",
+  "unit_first_attempt": "16 passed, 3 test-fixture setup errors (wrong Catalog version field); retained privately, fixed before preregistration",
+  "unit_final_count": 19,
+  "unit_final_exit": 0
+}

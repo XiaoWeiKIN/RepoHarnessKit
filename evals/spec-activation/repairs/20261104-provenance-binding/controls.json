@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "scope": "Source binding regression, not semantic Gold Set or Agent accuracy",
+  "parent_head": "8c5c42a82a8f7cd8472b09ca9e78e18fe0faf264",
+  "evaluator_sha256": {
+    "parent": "ce17f468f29c9038496daa6e4c71f7d6eea5de51f2ed14515569360fc80222b9",
+    "repaired": "5de1581ec0da3991afa1964b69c75029239498af4171bf86dab01ad99eda017b"
+  },
+  "inputs": {
+    "initial-B.tar.gz": "4681634fe89b8ba56e46e73d943ded022f86666b476f9209eb847ca203414398",
+    "repoharness-spec-compliance-88a7202-20261101.zip": "92446e00a856a86f80403e21ee3c426e9ee0554b26978b12e3765a622b1e1d59",
+    "corpus.json": "897a792aee32010a45060d1b26846fcf6c8dec27783868405314c9d6519c3796",
+    "history.json": "998c59173f10f467b3470096f6ae6a71e40a98d7bd9668cc5a9848248427a579"
+  },
+  "totals": {
+    "parent_expected_outcomes": 6,
+    "repaired_expected_outcomes": 13,
+    "controls": 13
+  },
+  "controls": [
+    {
+      "id": "valid_subject",
+      "expected": "accepted",
+      "parent": "accepted",
+      "repaired": "accepted"
+    },
+    {
+      "id": "nonexistent_requirement_source",
+      "expected": "rejected",
+      "parent": "accepted",
+      "repaired": "rejected"
+    },
+    {
+      "id": "other_locked_spec_source",
+      "expected": "rejected",
+      "parent": "accepted",
+      "repaired": "rejected"
+    },
+    {
+      "id": "missing_requirement_source",
+      "expected": "rejected",
+      "parent": "accepted",
+      "repaired": "rejected"
+    },
+    {
+      "id": "wrong_requirement_block_digest",
+      "expected": "rejected",
+      "parent": "rejected",
+      "repaired": "rejected"
+    },
+    {
+      "id": "wrong_lock_pin",
+      "expected": "rejected",
+      "parent": "rejected",
+      "repaired": "rejected"
+    },
+    {
+      "id": "valid_history",
+      "expected": "accepted",
+      "parent": "accepted",
+      "repaired": "accepted"
+    },
+    {
+      "id": "wrong_case_diff_digest",
+      "expected": "rejected",
+      "parent": "accepted",
+      "repaired": "rejected"
+    },
+    {
+      "id": "nonexistent_case_diff_source",
+      "expected": "rejected",
+      "parent": "accepted",
+      "repaired": "rejected"
+    },
+    {
+      "id": "registered_wrong_role_source",
+      "expected": "rejected",
+      "parent": "accepted",
+      "repaired": "rejected"
+    },
+    {
+      "id": "missing_case_diff_reference",
+      "expected": "rejected",
+      "parent": "accepted",
+      "repaired": "rejected"
+    },
+    {
+      "id": "wrong_archive_pin",
+      "expected": "rejected",
+      "parent": "rejected",
+      "repaired": "rejected"
+    },
+    {
+      "id": "wrong_registered_diff_digest",
+      "expected": "rejected",
+      "parent": "rejected",
+      "repaired": "rejected"
+    }
+  ],
+  "cli_negative_controls": [
+    {
+      "control": "source-path",
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "activation-baseline: Requirement source drift: GO-NAME-001",
+      "complete_artifact_exists": false,
+      "router_log_bytes": 0
+    },
+    {
+      "control": "diff-digest",
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "activation-baseline: Historical final_diff registry binding mismatch",
+      "complete_artifact_exists": false,
+      "router_log_bytes": 0
+    },
+    {
+      "control": "diff-locator",
+      "exit_code": 2,
+      "stdout": "",
+      "stderr": "activation-baseline: Invalid historical final_diff reference",
+      "complete_artifact_exists": false,
+      "router_log_bytes": 0
+    }
+  ],
+  "inputs_unchanged": true,
+  "temporary_subjects_unchanged": true,
+  "limits": [
+    "Private originals retained outside public Git; tests generate small ZIP fixtures for public reproduction.",
+    "No new semantic label adjudication, candidate metric measurement, Agent execution, or native Hook test.",
+    "The source registry and corpus remain trusted frozen inputs; hashes are not authentication."
+  ]
+}

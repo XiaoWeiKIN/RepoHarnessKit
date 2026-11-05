@@ -47,16 +47,28 @@ evidence boundaries apply in every mode.
      candidates --path <path> [--path <path> ...]
    ```
 
-3. For every candidate, read its Catalog purpose and `Applicability` section.
-   Inspect enough existing code and project documentation to decide whether the
-   task intent activates it. A matching file scope alone is not activation.
-4. Request bounded cards only for applicable Specs:
+3. For every path candidate, read its Catalog purpose, `Applicability` section,
+   and Requirement Activation cards before excluding the Spec. A title or path
+   match alone cannot decide applicability. Inspect the task and affected code.
+4. Request bounded cards in batches, starting with one candidate Spec per call:
 
    ```bash
    python3 .repo-foundry/engineering-specs/spec_router.py requirements \
      --path <path> [--path <path> ...] \
-     --spec <applicable-id> [--spec <applicable-id> ...]
+     --spec <candidate-spec-id>
    ```
+
+   Cover every candidate batch. `applicable_specs` in this output identifies
+   requested entries, not an independent applicability verdict. If a batch is
+   too large, split Specs or explicitly adjust the card budget and check the
+   actual returned output; do not discard rules to fit. If a single Spec still
+   cannot be reviewed completely, report the gap. Whole-Spec entries without
+   cards retain their source Applicability review and reasoned fallback.
+   Jointly evaluate Spec boundaries and each Requirement's Activation text.
+   Keep applicable, not-applicable and uncertain decisions distinct; record
+   conflicts or missing facts instead of treating silence as exclusion. Resolve
+   uncertainty before affected high-risk operations. A compact in-session
+   checklist is sufficient; this step adds no mandatory persistent artifact.
 
 5. Record the smallest complete direct Requirement set before work:
 
@@ -86,10 +98,53 @@ evidence boundaries apply in every mode.
      --none --reason "<why no installed Spec governs this task>"
    ```
 
-7. Rerun activation when paths, applicable Specs, or direct Requirements
-   change. After compaction or a manual context resume, run `rehydrate` with
+7. For CLI fallback, use separate, sequential tool calls for `activate`,
+   `rehydrate`, and `preflight`. Wait for each response; never combine or
+   parallelize these stages in one outer tool call. Deliver the capsule in its
+   own response, without unrelated status output. Choose a supported output
+   allowance for the full response, including routing context and JSON framing;
+   the Router's byte budget is not the host's token/output limit.
+
+   Inspect the actual model-visible response for truncation or omitted content.
+   A saved file, process stdout, capsule hash, or epoch flag alone does not prove
+   complete delivery. If necessary, read exact bounded segments of the same capsule
+   at the same digest and context epoch; cover the full ordered range without
+   gaps or mixed revisions. Do not call `rehydrate` between segments: it changes
+   the epoch. Recover missing content before editing, never replace it with a
+   summary or reduce the applicable Requirement set. If the host cannot expose
+   complete content, stop affected edits and report delivery UNVERIFIED. These
+   are workflow instructions, not a new runtime write interceptor. Verified
+   native Hook delivery can supply the capsule instead of a duplicate CLI epoch.
+
+   Before the **first code edit**, enumerate each exact intended source and
+   test file (a glob is not evidence that it covers an actual path). Review
+   every Requirement card against the task and planned code, including naming,
+   direct/common paths, control flow, error and test obligations. Then
+   explicitly check file coverage, current-epoch context delivery and any
+   independently identified must-include Requirements:
+
+   ```bash
+   python3 .repo-foundry/engineering-specs/spec_router.py preflight \
+     --adapter-id codex --session-id <session-id> --turn-id <turn-id> \
+     --path <exact-source-file> --path <exact-test-file> \
+     [--expect-requirement <required-ID> ...]
+   ```
+
+   Preflight is read-only and fails while the turn's current files differ
+   from its baseline. It cannot detect edits subsequently reverted to identical
+   bytes or independently establish a historical edit timeline. It does
+   **not** infer applicability, prove Agent understanding, or certify that a
+   CLI-only edit was blocked. When Hooks are absent,
+   use `rehydrate` first to deliver the exact capsule in the current epoch.
+   `capsule_delivered_in_current_epoch` checks Router bookkeeping, not the
+   outer response. Agent-supplied expected IDs do not prove selection completeness.
+   A post-edit activation or preflight cannot repair missing pre-edit evidence.
+8. Rerun activation when paths, applicable Specs, or direct Requirements
+   change. Recheck new naming, branches and tests before further mutation;
+   any previous edit remains auditable against its original activation.
+   After compaction or a manual context resume, run `rehydrate` with
    the active adapter/session/turn so the next epoch receives the same capsule.
-8. Before handoff, export the source-verified enforcement context:
+9. Before handoff, export the source-verified enforcement context:
 
    ```bash
    python3 .repo-foundry/engineering-specs/spec_router.py evidence \
@@ -119,8 +174,16 @@ Exceptions: none | <governed exception>
 Compatibility or migration: none | <observable effect and plan>
 ```
 
-The handoff is an evidence index, not a substitute for tests or immutable
-artifacts.
+Report implementation results, executed checks, activation/delivery observations,
+and remaining gaps separately. The handoff is an evidence index, not a substitute
+for tests or immutable artifacts. Router audit success is not code compliance.
+A missing canonical check (including an offline dependency failure)
+is **UNVERIFIED / incomplete**, not PASS. Preflight dependency availability
+before implementation; execute declared Verification rows and canonical CI or
+record the exact blocked command, root cause and any authorized exception.
+Do not claim full Spec compliance when required checks remain incomplete.
+For no-effect requirements, a pure-function unit test or source review cannot
+substitute for required integration no-write/rollback evidence.
 
 ## Safety
 

@@ -61,7 +61,7 @@ adapter ID 不得重复，生成路径不得发生 ownership collision。现有 
 - 同时传 `--profile` 与 `--adapter` 会失败；
 - 两者都省略时暂时默认 `codex`，并返回
   `HARNESS_ADAPTER_DEFAULT_DEPRECATED`；
-- schema 1/2 只读兼容，只有显式 `upgrade --to 0.15.1 --apply` 写 schema 3。
+- schema 1/2 只读兼容，只有显式 `upgrade --to 0.15.3 --apply` 写 schema 3。
 
 ## Core 与 adapter 的安装结构
 
@@ -138,7 +138,7 @@ enforcement 为 CLI/advisory，不声称原生拦截写入。
 
 ## 受控技术写作入口
 
-当前源码的 Core `1.6.0` 与 Codex adapter `2.4.2` 增加显式写作路由，尚未发布。
+当前源码的 Core `1.6.2` 与 Codex adapter `2.4.4` 保留显式写作路由；版本仍为发布候选。
 新建 Codex `AGENTS.md` 和共享 project Skill 会要求：撰写、修订或评审工程正文前，
 先解析负责该工作的专业 Skill，再读取该 Skill 内的 `references/controlled-writing.md`。
 此路径相对于专业 Skill，不相对于目标仓库或共享 project Skill。
@@ -177,8 +177,8 @@ adapter 能力由 `adapter list` 的结构化输出声明：
 
 `docs/.engineering/harness.json` 记录独立版本面和每个文件的唯一 owner：
 
-下例对应 RepoFoundry `0.15.1`：Core `1.5.5`、Codex `2.4.2`、Claude `1.3.1`、
-Portable `1.3.2`。
+下例对应 RepoFoundry `0.15.3`：Core `1.6.2`、Codex `2.4.4`、Claude `1.3.3`、
+Portable `1.3.4`。
 
 ```json
 {
@@ -186,25 +186,25 @@ Portable `1.3.2`。
   "owner": "repo-foundry",
   "producer": {
     "name": "repo-foundry",
-    "version": "0.15.1"
+    "version": "0.15.3"
   },
   "core": {
-    "version": "1.5.5"
+    "version": "1.6.2"
   },
   "adapters": [
     {
       "id": "codex",
-      "version": "2.4.2",
+      "version": "2.4.4",
       "enforcement": "native"
     },
     {
       "id": "claude",
-      "version": "1.3.1",
+      "version": "1.3.3",
       "enforcement": "cli"
     },
     {
       "id": "portable",
-      "version": "1.3.2",
+      "version": "1.3.4",
       "enforcement": "cli"
     }
   ],
@@ -226,13 +226,13 @@ protocol 与 Engineering Specifications Catalog 分别版本化。改变 Codex H
 
 ## 版本与 Harness 升级
 
-当前迁移目标为 `0.15.1`：
+当前迁移目标为 `0.15.3`：
 
 ```bash
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.1
+  upgrade --to 0.15.3
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.1 --apply
+  upgrade --to 0.15.3 --apply
 ```
 
 0.8.0 引入、并由后续版本保持的 migration 会以 additive 方式创建
@@ -249,8 +249,8 @@ python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
 - 定制的 repository document：保留原字节并清除不可信模板 provenance；
 - schema 2 的 Codex profile 映射为 `codex@2.0.0` adapter；
 - 安装唯一的 Core activation engine，并在来源可证明时把旧 Router 改成薄 adapter；
-- schema 3 的旧 Core 与 adapter 版本保持可读；升级到 Core `1.5.5`、Codex
-  `2.4.2`、Claude `1.3.1`、Portable `1.3.2` 时按已记录 provenance 替换生成文件并记录
+- schema 3 的旧 Core 与 adapter 版本保持可读；升级到 Core `1.6.2`、Codex
+  `2.4.4`、Claude `1.3.3`、Portable `1.3.4` 时按已记录 provenance 替换生成文件并记录
   组件 migration；
 - Spec manifest、lock、managed Markdown 与 Catalog 版本不参与 Harness migration；
 - 写入后 validation 失败：恢复全部触碰文件并清理本次创建的空目录；

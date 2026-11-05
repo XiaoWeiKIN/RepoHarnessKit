@@ -87,26 +87,26 @@ Spec conformance, use `.repo-foundry/engineering-specs/spec_router.py`, the cano
 1. Establish one stable adapter, session, and turn identity with `begin`.
 2. Continue bounded Explore work, or use `classify --mode build|governed
    --reason <risk>` before crossing that boundary. Mode decreases are invalid.
-3. In Build or Governed, inspect path-matched choices with `candidates --path <path>` and decide Spec
-   Applicability.
-4. Use `requirements` for bounded cards, then `activate` exact direct IDs with
-   one task-specific reason each; code resolves their context dependencies.
+3. In Build/Governed, get path candidates. Read each Applicability section and
+   bounded Requirement cards before excluding a Spec; batch without dropping candidates.
+4. Judge both levels against task and code; keep uncertain conditions explicit.
+   Then `activate` exact direct IDs with reasons; code resolves context dependencies.
 5. Use reasoned whole-Spec fallback only for legacy/migration/audit work, or
    `--none` with a reason when no Spec applies.
-6. Keep the exact digest-verified capsule in context; run `rehydrate` after a
-   context reset rather than summarizing normative text.
-7. Run `audit` before completion so changed paths and the handoff are checked
-   against the recorded receipt.
+6. For CLI fallback, use separate, sequential tool calls for activation, rehydrate and preflight.
+   Check model-visible delivery before editing; an emitted capsule or epoch flag is
+   not proof of complete receipt. On truncation, recover the same capsule in full
+   or stop affected edits as UNVERIFIED; never shrink the applicable set to fit.
+   After a context reset, rehydrate again; follow the adapter's delivery procedure.
+7. Run `audit` before completion; it checks paths and handoff, not code compliance.
 
 If the engine is absent, report that project Spec activation is unavailable; do not silently claim that no Specification applies.
 
 ## Complete with evidence
-
-Lead with outcomes, changes since a known baseline, and decision or verification
-gaps. Use clear, consistent terms; link claims to source revisions and evidence,
-noting dirty changes. Expand detail as needed; label assumptions in optional
-diagrams or interactive views. Run checks proportional to risk. Explore uses
-normal prose; Build and Governed retain these audit labels:
+Report implementation results, executed checks, activation/delivery evidence and
+unknowns separately. Link claims to source revisions, noting dirty changes and
+assumptions. Run checks proportional to risk. Explore uses normal prose;
+Build and Governed retain these audit labels:
 
 - `Activated specifications:`
 - `Activated requirements:`

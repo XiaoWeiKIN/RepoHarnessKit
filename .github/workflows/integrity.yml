@@ -20,6 +20,8 @@ jobs:
   integrity-python:
     name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    env:
+      RF_RELEASE_BASE: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
     strategy:
       fail-fast: false
       matrix:

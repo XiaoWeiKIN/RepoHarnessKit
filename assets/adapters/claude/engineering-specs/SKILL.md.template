@@ -28,26 +28,62 @@ python3 .repo-foundry/engineering-specs/spec_router.py --repo . \
   --mode <build|governed> --reason <risk-reason>
 ```
 
-Build and Governed decide Spec Applicability, request bounded cards, then record
-exact direct Requirements with one reason per ID for every applicable path scope:
+In Build/Governed, read each candidate's Applicability and Requirement Activation
+cards before excluding it. Request one candidate Spec per call, then evaluate both
+levels against task and code. Keep uncertain conditions or conflicts explicit;
+resolve them before affected high-risk operations. Record exact direct IDs with reasons:
 
 ```bash
 python3 .repo-foundry/engineering-specs/spec_router.py --repo . \
   candidates --path <path>
 python3 .repo-foundry/engineering-specs/spec_router.py --repo . \
-  requirements --path <path> --spec <applicable-spec-id>
+  requirements --path <path> --spec <candidate-spec-id>
 python3 .repo-foundry/engineering-specs/spec_router.py --repo . \
   activate --adapter-id claude --session-id <session> --turn-id <turn> \
   --path <path> --spec <applicable-spec-id> \
   --requirement <ID> --because "<ID>=<task-specific reason>"
 ```
 
+Cover all candidate batches; `applicable_specs` echoes requested entries, not a
+verdict. Split batches or adjust the card budget without dropping rules; if one
+Spec still cannot be reviewed completely, report the gap. Whole-Spec entries
+without cards retain source review. No persistent decision table is required.
 Repeat the flags for multiple selections. Use `--whole-spec` plus
 `--whole-spec-reason` only for an indexed legacy fallback, migration, or broad
 audit. If none applies, use `--none` with a reason. After compaction, run
 `rehydrate` for the active identity. Never infer none from an empty candidate
 list and never summarize or truncate normative text to fit a budget. Raising
 the default capsule budget requires `--capsule-budget-reason`.
+
+Before the **first** Build/Governed edit, review all applicable
+Requirement cards for identifiers, common paths, control flow, errors and
+tests. Enumerate exact intended source/test files, not just a glob. Without
+Hooks, use separate, sequential tool calls for activation, `rehydrate`, and
+preflight; do not combine or parallelize them in one outer tool call. Deliver
+original text in its own response without unrelated output. Account for context
+and framing as well as capsule bytes; byte and host output budgets differ.
+Inspect the actual model-visible response for truncation or omitted content.
+Saved output, a digest or an epoch flag alone is not complete-delivery evidence.
+Recover exact segments of the same capsule at one digest/epoch, covering the
+full ordered range without gaps; do not rehydrate between segments. Never
+summarize or shrink the applicable set to fit. If complete delivery cannot be
+established, stop affected edits and report UNVERIFIED. Then run:
+
+```bash
+python3 .repo-foundry/engineering-specs/spec_router.py --repo . \
+  preflight --adapter-id claude --session-id <session> --turn-id <turn> \
+  --path <exact-source> --path <exact-test> \
+  [--expect-requirement <independently-identified-ID> ...]
+```
+
+This is a read-only snapshot gate, not an applicability inference or native
+write block. The delivery flag checks Router bookkeeping, not outer responses;
+Agent-supplied expected IDs do not prove selection completeness. An activation
+after editing cannot certify earlier compliance.
+Review new names and branches before later changes. If required canonical
+verification cannot run (including offline dependency failures), report
+UNVERIFIED/incomplete rather than PASS. Do not substitute source review for
+required no-effect integration evidence.
 
 Before Build/Governed completion, audit the receipt and handoff:
 
@@ -60,6 +96,8 @@ python3 .repo-foundry/engineering-specs/spec_router.py --repo . \
 ```
 
 Explore reports outcome, verification, and unresolved risk in ordinary prose.
+Separate implementation results, executed checks, activation/delivery observations
+and gaps; audit success does not certify code compliance.
 The evidence export carries source-owned published levels and an Advisory
 effective level. It is activation evidence, not a finding-lifecycle claim.
 Build/Governed responses contain `Activated specifications:`,

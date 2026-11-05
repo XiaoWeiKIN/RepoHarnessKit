@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import shutil
 import tempfile
 import unittest
@@ -20,7 +21,7 @@ FILES = (
     "VERSION", "scripts/foundryctl.py", "tests/test_foundryctl.py",
     "tests/test_repository_contracts.py", "README.md", "README.zh-CN.md",
     "references/specifications.md", "references/bootstrap.md",
-    "references/upgrades.md",
+    "references/upgrades.md", "release.json",
 )
 
 
@@ -55,6 +56,9 @@ class SpecDrivenReleaseTests(unittest.TestCase):
             "rf_version": expected_rf,
         })
         self.assertEqual((self.root / "VERSION").read_text().strip(), expected_rf)
+        metadata = json.loads((self.root / "release.json").read_text())
+        self.assertEqual(metadata["distribution"], expected_rf)
+        self.assertEqual(metadata["default_spec_version"], self.new_spec)
         self.assertIn(
             f'DEFAULT_SPEC_VERSION = "{self.new_spec}"',
             (self.root / "scripts/foundryctl.py").read_text(),
@@ -79,6 +83,15 @@ class SpecDrivenReleaseTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 release.prepare(self.root, value)
         self.assertEqual(self.snapshot(), before)
+
+    def test_historical_release_note_link_survives_next_spec_release(self) -> None:
+        doc = self.root / "references/upgrades.md"
+        before = doc.read_text()
+        link = "../docs/releases/0.15.2.md"
+        self.assertIn(link, before)
+        result = release.prepare(self.root, self.new_spec)
+        self.assertIn(link, doc.read_text())
+        self.assertIn(f"upgrade --to {result['rf_version']}", doc.read_text())
 
 
 if __name__ == "__main__":

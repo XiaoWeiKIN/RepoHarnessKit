@@ -166,6 +166,7 @@ class InstallerTestCase(unittest.TestCase):
                 discovered,
                 {
                     "SKILL.md",
+                    "architecture-design/SKILL.md",
                     "detailed-design/SKILL.md",
                     "engineering-benchmark/SKILL.md",
                     "engineering-case-study/SKILL.md",
