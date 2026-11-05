@@ -1,0 +1,11 @@
+{
+  "status": "host_invocation_timed_out",
+  "host_timeout_seconds": 120,
+  "completed_cli_records": 47,
+  "original_log_sha256": "154f0756f2971459c8bc8abf9b295c3389a5e9a6ed29c95f0a258b55d5951157",
+  "original_log_bytes": 239273,
+  "exit_code": null,
+  "scored_samples": 0,
+  "metrics": null,
+  "retention": "Private commands.jsonl retained in delivered reproduction bundle; no normative stdout republished here."
+}

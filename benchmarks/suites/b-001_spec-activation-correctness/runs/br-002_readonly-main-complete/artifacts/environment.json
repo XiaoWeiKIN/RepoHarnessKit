@@ -1,0 +1,22 @@
+{
+  "observed_at_utc": "2026-11-03T10:07:15.757115+00:00",
+  "python": "3.13.5",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "machine": "x86_64",
+  "git": "git version 2.47.3",
+  "source_reconstruction": {
+    "method": "exact main tree from archived base plus PR109 patch, verified signed commit objects imported",
+    "main_commit": "4c56912785f498232c69722bd6327b92aaed4a04",
+    "main_tree": "fbfff712a74e227ec2be417e48eba8ea1aac9fa5",
+    "legacy_generator_commit": "88a72024018f9258ef7c66f7ad36bd0554df9ce1",
+    "history": "shallow; required exact legacy tree available",
+    "network": "no task-time network access"
+  },
+  "spec_source_crosscheck": {
+    "catalog_revision": "b0719f806615c0bb4f3d496931f14b6dc29df7e6",
+    "locked_specs_compared_to_original_source_archive": 9,
+    "matching": 9,
+    "normative_bytes_modified": false
+  },
+  "production_files_modified": false
+}
