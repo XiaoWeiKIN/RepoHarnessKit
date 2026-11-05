@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "distribution": "0.15.2",
-  "core": "1.6.1",
+  "distribution": "0.15.3",
+  "core": "1.6.2",
   "adapters": {
-    "codex": "2.4.3",
-    "claude": "1.3.2",
-    "portable": "1.3.3"
+    "codex": "2.4.4",
+    "claude": "1.3.3",
+    "portable": "1.3.4"
   },
   "harness_schema": 3,
   "activation_protocol": 2,

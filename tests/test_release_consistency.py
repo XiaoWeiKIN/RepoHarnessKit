@@ -50,9 +50,14 @@ class ReleaseConsistencyTests(unittest.TestCase):
 
     def test_bumped_component_still_requires_distribution_bump(self):
         p = self.root / "scripts/foundryctl.py"
-        p.write_text(p.read_text().replace('CORE_HARNESS_VERSION = "1.6.1"', 'CORE_HARNESS_VERSION = "1.6.2"'))
+        source = p.read_text()
+        current = gate.declarations(source.encode())["CORE_HARNESS_VERSION"]
+        major, minor, patch = gate.version(current)
+        bumped = f"{major}.{minor}.{patch + 1}"
+        p.write_text(source.replace(f'CORE_HARNESS_VERSION = "{current}"',
+                                   f'CORE_HARNESS_VERSION = "{bumped}"'))
         metadata = json.loads((self.root / "release.json").read_text())
-        metadata["core"] = "1.6.2"
+        metadata["core"] = bumped
         (self.root / "release.json").write_text(json.dumps(metadata))
         result = gate.check(self.root, "HEAD")
         self.assertTrue(any("RELEASE_DISTRIBUTION_VERSION_REQUIRED: core" in e for e in result["errors"]), result)
@@ -64,8 +69,13 @@ class ReleaseConsistencyTests(unittest.TestCase):
         self.assertIn("RELEASE_METADATA_MISMATCH", " ".join(gate.check(self.root, "HEAD")["errors"]))
 
     def test_history_is_parsed_without_execution(self):
+        source = (ROOT / "scripts/foundryctl.py").read_bytes()
+        current = gate.declarations(source)["CORE_HARNESS_VERSION"]
+        mutated = source.replace(f'CORE_HARNESS_VERSION = "{current}"'.encode(),
+                                 b'CORE_HARNESS_VERSION = print("must not execute")')
+        self.assertNotEqual(source, mutated)
         with self.assertRaisesRegex(ValueError, "Nonliteral"):
-            gate.declarations((ROOT / "scripts/foundryctl.py").read_bytes().replace(b'CORE_HARNESS_VERSION = "1.6.1"', b'CORE_HARNESS_VERSION = print("must not execute")'))
+            gate.declarations(mutated)
 
 
 if __name__ == "__main__":
