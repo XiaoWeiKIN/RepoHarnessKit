@@ -180,14 +180,49 @@ class InstallerTestCase(unittest.TestCase):
                 {
                     "SKILL.md",
                     "architecture-design/SKILL.md",
-                    "detailed-design/SKILL.md",
+                    "design-documentation/SKILL.md",
                     "engineering-benchmark/SKILL.md",
                     "engineering-case-study/SKILL.md",
-                    "engineering-design/SKILL.md",
+                    "governed-design/SKILL.md",
                     "engineering-execution-plan/SKILL.md",
                     "engineering-research/SKILL.md",
                 },
             )
+
+    def test_legacy_skill_names_still_validate_without_duplicate_discovery(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / "source"
+            self.copy_source(source, "0.2.0")
+            (source / "design-documentation").rename(source / "detailed-design")
+            (source / "governed-design").rename(source / "engineering-design")
+            # Simulate the older immutable distribution's own CLI layout.
+            ctl = source / "scripts" / "foundryctl.py"
+            ctl.write_text(
+                ctl.read_text(encoding="utf-8").replace(
+                    'SKILL_DIR / "governed-design" / "scripts" / "designctl.py"',
+                    'SKILL_DIR / "engineering-design" / "scripts" / "designctl.py"',
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual(installer.validate_package(source), "0.2.0")
+
+    def test_mixed_skill_naming_layout_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / "source"
+            self.copy_source(source, "0.2.0")
+            (source / "design-documentation").rename(source / "detailed-design")
+            with self.assertRaisesRegex(installer.InstallError, "mixed or incomplete"):
+                installer.validate_package(source)
+
+    def test_missing_modern_skill_entrypoint_is_rejected(self) -> None:
+        for relative in ("design-documentation/SKILL.md", "governed-design/SKILL.md"):
+            with self.subTest(relative=relative):
+                with tempfile.TemporaryDirectory() as temporary:
+                    source = Path(temporary) / "source"
+                    self.copy_source(source, "0.2.0")
+                    (source / relative).unlink()
+                    with self.assertRaisesRegex(installer.InstallError, "missing or unsafe"):
+                        installer.validate_package(source)
 
     def test_pinned_legacy_template_names_remain_installable(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

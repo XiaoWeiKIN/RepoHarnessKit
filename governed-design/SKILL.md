@@ -1,9 +1,9 @@
 ---
-name: engineering-design
-description: 创建、评审、批准或修订受治理的 DD-NNN / Design Package。普通架构、模块说明与实现合同文档使用 detailed-design。
+name: governed-design
+description: 创建、评审、批准或修订受治理的 DD-NNN / Design Package。普通架构、模块说明与实现合同文档使用 design-documentation。
 ---
 
-# Engineering Design
+# Governed Design
 
 撰写、改写或评审文档正文前，读取并应用 [受控技术写作](references/controlled-writing.md)。
 先用通用规则，再用当前制品对应的小节；保留现有语言选择和生命周期门禁。
@@ -28,7 +28,7 @@ flowchart LR
 
 - 仍有会改变路线的未知：先用 `engineering-research`。
 - 需要从代码建立 mental model，撰写或优化普通 Architecture、Internals、模块设计或实现
-  合同，但不需要 `DD-NNN` 生命周期：使用 `detailed-design`。
+  合同，但不需要 `DD-NNN` 生命周期：使用 `design-documentation`。
 - 外部事实已经足够，但平台边界、状态所有权、接口形态、失败策略等仍有多个合理取舍：
   留在本 skill，先做交互式探索。
 - 需要授权一个长期架构选择：用 `engineering-execution-plan` 创建 ADR。

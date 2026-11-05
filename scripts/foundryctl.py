@@ -33,7 +33,9 @@ VERSION_FILE = SKILL_DIR / "VERSION"
 EXECUTION_PLAN_CTL = (
     SKILL_DIR / "engineering-execution-plan" / "scripts" / "epctl.py"
 )
-DESIGN_CTL = SKILL_DIR / "engineering-design" / "scripts" / "designctl.py"
+# The manifest component ID remains "engineering-design" for existing schema-3
+# installations. Only the bundled Skill location changes.
+DESIGN_CTL = SKILL_DIR / "governed-design" / "scripts" / "designctl.py"
 PROFESSIONAL_COMPONENTS = [
     "engineering-design",
     "engineering-execution-plan",

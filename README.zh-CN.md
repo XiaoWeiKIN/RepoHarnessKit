@@ -47,10 +47,10 @@ flowchart LR
 |---|---|---|
 | [`repo-foundry-ai`](./SKILL.md) | 盘点、Bootstrap、同步 Specs、验证 Harness、路由工作 | `AGENTS.md`、架构与文档地图、Harness 与 Spec manifests |
 | [`architecture-design`](./architecture-design/SKILL.md) | 从需求与真实代码进行架构设计和审计：复杂度归属、深模块、信息隐藏与变化传播 | 有证据的方案对比、评审发现、可证伪变化场景；不强制写文档或创建 DD |
-| [`detailed-design`](./detailed-design/SKILL.md) | 从仓库证据协作撰写和评审 Architecture、Internals、模块设计与实现合同 | 默认一份聚焦 Markdown；不创建 DD 治理制品 |
+| [`design-documentation`](./design-documentation/SKILL.md) | 从仓库证据协作撰写和评审 Architecture、Internals、模块设计与实现合同 | 默认一份聚焦 Markdown；不创建 DD 治理制品 |
 | [`engineering-benchmark`](./engineering-benchmark/SKILL.md) | 共同校准并执行可复现测量 | Suite、Scenario、Run、Result、sealed Evidence Manifest |
 | [`engineering-research`](./engineering-research/SKILL.md) | 共同引导未知并综合多文档证据 | Research controller、corpus Manifest、Rounds、topics、sealed Synthesis |
-| [`engineering-design`](./engineering-design/SKILL.md) | 探索取舍并把已建立的证据翻译成可评审设计 | 单文件或多文档 Design Package、阅读地图、manifest、已批准 revision 快照 |
+| [`governed-design`](./governed-design/SKILL.md) | 探索取舍并把已建立的证据翻译成可评审设计 | 单文件或多文档 Design Package、阅读地图、manifest、已批准 revision 快照 |
 | [`engineering-execution-plan`](./engineering-execution-plan/SKILL.md) | 共同权衡 ADR 并校准受治理实施 | ADR、ExecPlan、Task、Checkpoint、Bugfix、技术债务 |
 | [`engineering-case-study`](./engineering-case-study/SKILL.md) | 把已验证代码和过程证据写成可分享内容 | 中文、英文或中英双语工程案例 |
 
@@ -452,7 +452,7 @@ adapter，并报告 create、preserve 和 conflict。只有预览无冲突时才
 路由专业工作：
 
 ```text
-使用 $detailed-design，从代码和现有文档建立系统 mental model，围绕真实流程、
+使用 $design-documentation，从代码和现有文档建立系统 mental model，围绕真实流程、
 核心抽象、边界和源码映射撰写一份架构文档。
 
 使用 $engineering-benchmark，在执行容量测量前共同校准有代表性、可复现的 Scenario。
@@ -460,7 +460,7 @@ adapter，并报告 create、preserve 和 conflict。只有预览无冲突时才
 使用 $engineering-research 共同校准缓存拓扑的研究问题和证据方向，
 保留反例和不确定性，停在 review-ready Synthesis。
 
-使用 $engineering-design 共同探索实质取舍，再把已确认输入翻译成技术
+使用 $governed-design 共同探索实质取舍，再把已确认输入翻译成技术
 Design Package，明确边界、契约、失败语义和可评审 revision。
 
 使用 $engineering-execution-plan 共同权衡 ADR，等待 Decision Owner 明确授权，
@@ -482,10 +482,10 @@ Design Package，明确边界、契约、失败语义和可评审 revision。
 | 场景 | 首选 Skill |
 |---|---|
 | 初始化仓库或路由模糊请求 | `$repo-foundry-ai` |
-| 撰写或评审架构、Internals、模块设计或实现合同 | `$detailed-design` |
+| 撰写或评审架构、Internals、模块设计或实现合同 | `$design-documentation` |
 | 产生可复现测量 | `$engineering-benchmark` |
 | 调研未知或接管现有 corpus | `$engineering-research` |
-| 创建或修订技术 Design Package | `$engineering-design` |
+| 创建或修订技术 Design Package | `$governed-design` |
 | 记录决定或推动交付 | `$engineering-execution-plan` |
 | 编写可分享工程文章 | `$engineering-case-study` |
 
@@ -501,7 +501,7 @@ Skill 通过这些 CLI 修改状态并验证制品。维护者也可以直接用
 REPO_FOUNDRY_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/repofoundry-ai/current"
 BENCHCTL="$REPO_FOUNDRY_HOME/engineering-benchmark/scripts/benchctl.py"
 RESEARCHCTL="$REPO_FOUNDRY_HOME/engineering-research/scripts/researchctl.py"
-DESIGNCTL="$REPO_FOUNDRY_HOME/engineering-design/scripts/designctl.py"
+DESIGNCTL="$REPO_FOUNDRY_HOME/governed-design/scripts/designctl.py"
 EPCTL="$REPO_FOUNDRY_HOME/engineering-execution-plan/scripts/epctl.py"
 
 repofoundry --version
@@ -701,17 +701,17 @@ RepoHarnessKit：
 
 专业能力：
 
-- [架构文档方法](./detailed-design/references/architecture.md)
-- [模块与实现合同方法](./detailed-design/references/module-contract.md)
-- [详细设计评审](./detailed-design/references/review.md)
+- [架构文档方法](./design-documentation/references/architecture.md)
+- [模块与实现合同方法](./design-documentation/references/module-contract.md)
+- [详细设计评审](./design-documentation/references/review.md)
 - [Benchmark 契约](./engineering-benchmark/references/contract.md)
 - [Benchmark Scenario 协作校准](./engineering-benchmark/references/collaboration.md)
 - [Research 方法](./engineering-research/references/research.md)
 - [Research Manifest](./engineering-research/references/manifest.md)
 - [Research 协作引导](./engineering-research/references/collaboration.md)
-- [技术 Design 契约](./engineering-design/references/contract.md)
-- [技术 Design 评审](./engineering-design/references/review.md)
-- [交互式 Design 探索](./engineering-design/references/exploration.md)
+- [技术 Design 契约](./governed-design/references/contract.md)
+- [技术 Design 评审](./governed-design/references/review.md)
+- [交互式 Design 探索](./governed-design/references/exploration.md)
 - [执行制品路由](./engineering-execution-plan/references/templates.md)
 - [ADR 契约](./engineering-execution-plan/references/adr.md)
 - [ExecPlan 规范](./engineering-execution-plan/references/template.md)

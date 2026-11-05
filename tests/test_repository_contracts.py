@@ -22,7 +22,7 @@ EPCTL = (
     / "epctl.py"
 )
 RESEARCHCTL = ROOT / "engineering-research" / "scripts" / "researchctl.py"
-DESIGNCTL = ROOT / "engineering-design" / "scripts" / "designctl.py"
+DESIGNCTL = ROOT / "governed-design" / "scripts" / "designctl.py"
 BENCHCTL = ROOT / "engineering-benchmark" / "scripts" / "benchctl.py"
 EXAMPLE = ROOT / "examples" / "cache-topology"
 
@@ -94,8 +94,8 @@ class RepositoryContractTestCase(unittest.TestCase):
             "engineering-research/assets/synthesis.md": "research-synthesis",
             "engineering-research/assets/round.md": "research-round",
             "engineering-research/assets/topic.md": "research-topic",
-            "engineering-design/assets/design.md": "design-doc",
-            "engineering-design/assets/member.md": "design-member",
+            "governed-design/assets/design.md": "design-doc",
+            "governed-design/assets/member.md": "design-member",
             "engineering-execution-plan/assets/research.md": "research",
             "engineering-execution-plan/assets/synthesis.md": "research-synthesis",
             "engineering-execution-plan/assets/adr.md": "adr",
@@ -144,7 +144,7 @@ class RepositoryContractTestCase(unittest.TestCase):
             self.assertIn(f'"{field}":', manifest_asset)
 
         design_manifest_asset = (
-            ROOT / "engineering-design/assets/manifest.json"
+            ROOT / "governed-design/assets/manifest.json"
         ).read_text(encoding="utf-8")
         self.assertIn('"metadata_schema": "1"', design_manifest_asset)
         self.assertIn(
@@ -535,8 +535,8 @@ class RepositoryContractTestCase(unittest.TestCase):
             ),
         )
         self.assertIn(
-            "name: engineering-design",
-            (ROOT / "engineering-design" / "SKILL.md").read_text(
+            "name: governed-design",
+            (ROOT / "governed-design" / "SKILL.md").read_text(
                 encoding="utf-8"
             ),
         )
@@ -811,7 +811,7 @@ class RepositoryContractTestCase(unittest.TestCase):
         self.assertIn('"policy_schema": GOVERNANCE_POLICY_SCHEMA', foundryctl)
 
         professional_surfaces = {
-            ROOT / "detailed-design/SKILL.md": (
+            ROOT / "design-documentation/SKILL.md": (
                 "不因主题复杂、章节较多或评审项较多自动创建"
             ),
             ROOT / "engineering-research/SKILL.md": (
@@ -820,7 +820,7 @@ class RepositoryContractTestCase(unittest.TestCase):
             ROOT / "engineering-execution-plan/SKILL.md": (
                 "Explore/Build 不为“没有触发 Research”创建跳过制品"
             ),
-            ROOT / "engineering-design/SKILL.md": (
+            ROOT / "governed-design/SKILL.md": (
                 "Design approval 确认整套解释自洽"
             ),
             ROOT / "engineering-benchmark/SKILL.md": "普通测试",
@@ -1292,8 +1292,8 @@ class RepositoryContractTestCase(unittest.TestCase):
                 else:
                     shutil.copy2(source, destination)
             shutil.copytree(
-                ROOT / "engineering-design",
-                workflow_skill / "engineering-design",
+                ROOT / "governed-design",
+                workflow_skill / "governed-design",
             )
             shutil.copytree(
                 ROOT / "engineering-execution-plan",
@@ -1306,8 +1306,8 @@ class RepositoryContractTestCase(unittest.TestCase):
                 execution_skill,
             )
 
-            design_skill = base / "engineering-design"
-            shutil.copytree(ROOT / "engineering-design", design_skill)
+            design_skill = base / "governed-design"
+            shutil.copytree(ROOT / "governed-design", design_skill)
 
             research_skill = base / "engineering-research"
             shutil.copytree(ROOT / "engineering-research", research_skill)
@@ -1318,13 +1318,13 @@ class RepositoryContractTestCase(unittest.TestCase):
                 ROOT / "engineering-case-study",
                 case_study_skill,
             )
-            detailed_design_skill = base / "detailed-design"
-            shutil.copytree(ROOT / "detailed-design", detailed_design_skill)
+            detailed_design_skill = base / "design-documentation"
+            shutil.copytree(ROOT / "design-documentation", detailed_design_skill)
 
             detailed_design_text = (detailed_design_skill / "SKILL.md").read_text(
                 encoding="utf-8"
             )
-            self.assertIn("name: detailed-design", detailed_design_text)
+            self.assertIn("name: design-documentation", detailed_design_text)
             for relative in (
                 "references/architecture.md",
                 "references/module-contract.md",

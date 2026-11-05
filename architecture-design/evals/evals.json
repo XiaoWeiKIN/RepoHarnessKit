@@ -76,12 +76,12 @@
     {
       "id": 5,
       "prompt": "请把现有 Architecture.md 的逻辑和叙事写清楚，不评审或调整系统架构。",
-      "expected_output": "Routes to detailed-design for documentation authoring, not architecture-design or governed DD lifecycle.",
+      "expected_output": "Routes to design-documentation for documentation authoring, not architecture-design or governed DD lifecycle.",
       "files": [],
       "assertions": [
         {
           "name": "route-docs",
-          "description": "Routes writing-only artifact to detailed-design."
+          "description": "Routes writing-only artifact to design-documentation."
         },
         {
           "name": "no-overreach",

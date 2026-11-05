@@ -1,4 +1,4 @@
-# Engineering Design file contract
+# Governed Design file contract
 
 ## Logical identity and layouts
 

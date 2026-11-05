@@ -1,5 +1,5 @@
 {
-  "skill_name": "engineering-design",
+  "skill_name": "governed-design",
   "evals": [
     {
       "id": 1,
@@ -92,7 +92,7 @@
     {
       "id": 6,
       "prompt": "参考 DataFusion，基于当前代码给贡献者写一份查询引擎 Architecture 文档。",
-      "expected_output": "Routes ordinary architecture-document authoring to detailed-design and does not allocate a DD identity, manifest, package directory, or approval lifecycle.",
+      "expected_output": "Routes ordinary architecture-document authoring to design-documentation and does not allocate a DD identity, manifest, package directory, or approval lifecycle.",
       "files": [],
       "assertions": [
         {

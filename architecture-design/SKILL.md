@@ -11,8 +11,8 @@ description: 从真实需求和仓库证据设计系统架构，或审计现有�
 
 - **Design**：用户要求设计新系统、拆分子系统、确定状态/数据所有权、公共契约、依赖方向，或比较架构方案。
 - **Review**：用户要求审计真实项目的模块边界、耦合、信息泄漏、深/浅模块、变化传播、过度抽象或可演化性。
-- 仅要求编写、解释、润色 Architecture/Internals 文档时，使用 `detailed-design`。
-- 需要创建、批准、修订受治理的 `DD-NNN` 或 Design Package 时，使用 `engineering-design` 持有生命周期；本 Skill 只提供设计分析和可供采纳的 findings，不写入受保护 Design。
+- 仅要求编写、解释、润色 Architecture/Internals 文档时，使用 `design-documentation`。
+- 需要创建、批准、修订受治理的 `DD-NNN` 或 Design Package 时，使用 `governed-design` 持有生命周期；本 Skill 只提供设计分析和可供采纳的 findings，不写入受保护 Design。
 - 事实不足以决定技术路线时，交给 `engineering-research`；需要可重复实验时，交给 `engineering-benchmark`；ADR/EP 的决策与实施授权归 `engineering-execution-plan`。
 - 普通局部编码不因为“设计”一词而自动升级到架构评审。只覆盖可能改变模块职责、跨模块契约、状态所有权或显著耦合的范围。
 
@@ -68,4 +68,4 @@ description: 从真实需求和仓库证据设计系统架构，或审计现有�
 
 ## 交接约束
 
-本 Skill 的结论是建议或取证结果，**不是已批准的 Design/ADR/Spec，也不是运行成功的验证收据**。如用户要落地架构修改，应由项目现有 Harness、锁定 Spec、实施工作流和真实测试继续约束。评审结果可以被 `engineering-design` 或 `detailed-design` 引用，但不得在多个位置复制一份独立的规范事实。
+本 Skill 的结论是建议或取证结果，**不是已批准的 Design/ADR/Spec，也不是运行成功的验证收据**。如用户要落地架构修改，应由项目现有 Harness、锁定 Spec、实施工作流和真实测试继续约束。评审结果可以被 `governed-design` 或 `design-documentation` 引用，但不得在多个位置复制一份独立的规范事实。

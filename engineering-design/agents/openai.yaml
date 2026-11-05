@@ -1,4 +1,0 @@
-interface:
-  display_name: "Engineering Design"
-  short_description: "Create and govern versioned technical Design artifacts"
-  default_prompt: "Use $engineering-design to turn confirmed inputs into a governed DD-NNN Design artifact with an explicit review and publication lifecycle."

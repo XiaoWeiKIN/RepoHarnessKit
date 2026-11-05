@@ -459,13 +459,24 @@ def validate_package(root: Path, expected_version: str | None = None) -> str:
         Path("assets/adapters/claude/repo-foundry-ai/SKILL.md.template"),
         Path("assets/adapters/claude/engineering-specs/SKILL.md.template"),
         Path("engineering-benchmark/SKILL.md"),
-        Path("detailed-design/SKILL.md"),
-        Path("engineering-design/SKILL.md"),
         Path("engineering-research/SKILL.md"),
         Path("engineering-execution-plan/SKILL.md"),
         Path("engineering-case-study/SKILL.md"),
     )
     package_files(root)
+    # New distributions publish renamed Skill entrypoints. Immutable older
+    # release archives retain the former names; validate either complete
+    # layout without adding duplicate discoverable Skills.
+    modern = ("design-documentation", "governed-design")
+    legacy = ("detailed-design", "engineering-design")
+    modern_found = tuple((root / name).exists() for name in modern)
+    legacy_found = tuple((root / name).exists() for name in legacy)
+    if all(modern_found) and not any(legacy_found):
+        required += tuple(Path(f"{name}/SKILL.md") for name in modern)
+    elif not any(modern_found):
+        required += tuple(Path(f"{name}/SKILL.md") for name in legacy)
+    else:
+        raise InstallError("package Skill naming layout is mixed or incomplete")
     # Older pinned releases predate this optional professional capability.
     # If a distribution includes it, validate its entrypoints without
     # making installation of historical releases incompatible.

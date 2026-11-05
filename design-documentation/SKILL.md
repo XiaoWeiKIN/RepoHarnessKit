@@ -1,9 +1,9 @@
 ---
-name: detailed-design
-description: 撰写、重构或评审 Architecture、Internals、模块设计与实现合同文档。受治理的 DD-NNN / Design Package 生命周期使用 engineering-design。
+name: design-documentation
+description: 撰写、重构或评审 Architecture、Internals、模块设计与实现合同文档。受治理的 DD-NNN / Design Package 生命周期使用 governed-design。
 ---
 
-# Detailed Design
+# Design Documentation
 
 撰写、改写或评审文档正文前，读取并应用 [受控技术写作](references/controlled-writing.md)。
 先用通用规则，再用当前制品对应的小节；保留现有语言选择和生命周期门禁。
@@ -16,13 +16,13 @@ description: 撰写、重构或评审 Architecture、Internals、模块设计与
 
 ## 与 Engineering Design 的边界
 
-- `detailed-design` 负责文档内容：mental model、流程、抽象、边界、不变量、源码映射和技术评审。
-- `engineering-design` 负责受治理的 Design 制品：`DD-NNN`、manifest、revision、approval 和 snapshot。
+- `design-documentation` 负责文档内容：mental model、流程、抽象、边界、不变量、源码映射和技术评审。
+- `governed-design` 负责受治理的 Design 制品：`DD-NNN`、manifest、revision、approval 和 snapshot。
 - 普通“写架构设计文档”“解释系统内部原理”“优化这篇技术文档”使用本 skill。
 - 用户明确要求 Design Package、`DD-NNN`、批准或修订受治理 Design 时，切换到
-  `engineering-design`。不要为了显得正式而主动升级。
+  `governed-design`。不要为了显得正式而主动升级。
 
-本 skill 不直接修改受 `engineering-design` 管理的 Design Package；可以生成独立草稿或
+本 skill 不直接修改受 `governed-design` 管理的 Design Package；可以生成独立草稿或
 评审意见，再由 owning workflow 纳入。
 
 ## 选择工作模式

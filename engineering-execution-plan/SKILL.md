@@ -23,8 +23,8 @@ Explore 的有界可逆工作和 Build 的生产修改默认使用线程内契�
 | 用户要求持久记录的局部既有行为缺陷 | Bugfix |
 | 可复用或参与验收的测量证据 | `engineering-benchmark` |
 | 会改变工程决定且尚未解决的事实未知 | `engineering-research` 或兼容证据生产者 |
-| 普通架构、组件、接口与实现合同文档 | `detailed-design` |
-| 用户要求 DD-NNN、Design Package、批准或修订受治理设计 | `engineering-design` |
+| 普通架构、组件、接口与实现合同文档 | `design-documentation` |
+| 用户要求 DD-NNN、Design Package、批准或修订受治理设计 | `governed-design` |
 | 有可信替代方案且影响长期边界的选择 | ADR |
 | 需要可恢复交付、跨模块里程碑或实施已接受决定 | ExecPlan |
 | 项目 Harness 初始化、升级或 Spec 安装 | `repo-foundry-ai` |
@@ -67,7 +67,7 @@ Explore 的有界可逆工作和 Build 的生产修改默认使用线程内契�
   Confirmation、后果和 Revisit Triggers；关系与修改规则由 ADR 契约约束。
 - Research Gate 只接受 concluded 证据与有效 seal；active 或 cancelled 不满足 Gate。
   在下游复述影响实施的结论、置信边界、负面证据和剩余未知。
-- Design 的创建、批准、修订和替代属于 `engineering-design`。未批准 revision 可供
+- Design 的创建、批准、修订和替代属于 `governed-design`。未批准 revision 可供
   讨论，但 EP 完成必须固定全部依赖的有效 approved revision evidence。
 - Architecture Input Set 包含适用的 current ADR closure 与 Design 输入；用
   Compliance Matrix 将 ADR-NNN#C-NNN 映射到实现与验证。历史 compatibility
