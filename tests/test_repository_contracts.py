@@ -598,9 +598,9 @@ class RepositoryContractTestCase(unittest.TestCase):
             self.assertIn(command, content)
             self.assertIn(f"{command} --host claude", content)
 
-    def test_repofoundry_ai_brand_assets_are_valid(self) -> None:
+    def test_repoharnesskit_brand_assets_and_legacy_aliases_are_valid(self) -> None:
         brand = ROOT / "assets" / "brand"
-        for name in ("repofoundry-mark.svg", "repofoundry-icon.svg"):
+        for name in ("repoharnesskit-mark.svg", "repoharnesskit-icon.svg"):
             path = brand / name
             root = ET.parse(path).getroot()
             self.assertTrue(root.tag.endswith("svg"))
@@ -609,21 +609,45 @@ class RepositoryContractTestCase(unittest.TestCase):
             self.assertIn("#17202A", text)
             self.assertIn("#FF6B2C", text)
 
-        icon_svg = (brand / "repofoundry-icon.svg").read_text(
+        icon_svg = (brand / "repoharnesskit-icon.svg").read_text(
             encoding="utf-8"
         )
         self.assertIn("#F7F4ED", icon_svg)
 
-        png = (brand / "repofoundry-icon.png").read_bytes()
+        png = (brand / "repoharnesskit-icon.png").read_bytes()
         self.assertEqual(png[:8], b"\x89PNG\r\n\x1a\n")
         self.assertEqual(png[12:16], b"IHDR")
         self.assertEqual(struct.unpack(">II", png[16:24]), (256, 256))
         self.assertIn(png[25], (4, 6))
 
         guide = (brand / "README.md").read_text(encoding="utf-8")
-        self.assertIn("RepoFoundry AI Brand Assets", guide)
+        self.assertIn("RepoHarnessKit Brand Assets", guide)
+        for suffix in ("mark.svg", "icon.svg", "icon.png"):
+            self.assertEqual(
+                (brand / f"repoharnesskit-{suffix}").read_bytes(),
+                (brand / f"repofoundry-{suffix}").read_bytes(),
+            )
         self.assertIn("repository braces", guide)
         self.assertIn("AI spark", guide)
+
+    def test_public_brand_docs_preserve_governed_design_identity(self) -> None:
+        documents = ROOT / "docs" / "design-docs"
+        for public, registered, design_id in (
+            ("repoharnesskit-system.md", "repo-foundry-system.md", "DD-004"),
+            ("repoharnesskit-versioning-and-migrations.md",
+             "repo-foundry-versioning-and-migrations.md", "DD-006"),
+        ):
+            with self.subTest(public=public):
+                public_text = (ROOT / "docs" / public).read_text(encoding="utf-8")
+                legacy_text = (documents / registered).read_text(encoding="utf-8")
+                self.assertIn(f"](design-docs/{registered})", public_text)
+                self.assertNotIn("artifact_type: design-doc", public_text)
+                self.assertIn(f"id: {design_id}", legacy_text)
+        for readme in ("README.md", "README.zh-CN.md"):
+            source = (ROOT / readme).read_text(encoding="utf-8")
+            self.assertIn("repoharnesskit-system.md", source)
+            self.assertIn("repoharnesskit-versioning-and-migrations.md", source)
+            self.assertIn("repoharnesskit-icon.svg", source)
 
     def test_prompt_catalog_covers_every_distributed_skill(self) -> None:
         skill_files = [

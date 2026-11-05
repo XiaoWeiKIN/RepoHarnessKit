@@ -25,6 +25,19 @@ SPEC.loader.exec_module(installer)
 
 
 class InstallerTestCase(unittest.TestCase):
+    def test_public_brand_and_cli_identity_are_separate(self) -> None:
+        self.assertEqual(installer.PRODUCT_NAME, "RepoHarnessKit")
+        self.assertEqual(installer.PRODUCT_ID, "repo-foundry-ai")
+        self.assertEqual(installer.CLI_VERSION_NAME, "RepoFoundry AI")
+        with mock.patch("builtins.print") as printed:
+            installer.print_human({
+                "version": "0.15.3", "action": "installed",
+                "home": "/tmp/repoharnesskit-demo",
+                "cli": "/tmp/bin/repofoundry",
+                "host_integrations": [], "backups": [],
+            })
+        self.assertIn("RepoHarnessKit 0.15.3 installed", printed.call_args_list[0].args[0])
+
     def run_installer(
         self,
         source: Path,

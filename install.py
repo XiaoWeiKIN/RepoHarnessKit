@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install or upgrade RepoFoundry AI from one deterministic entrypoint."""
+"""Install or upgrade RepoHarnessKit from one deterministic entrypoint."""
 
 from __future__ import annotations
 
@@ -31,7 +31,9 @@ except ImportError:  # pragma: no cover - Windows is rejected by this release
 
 
 PRODUCT_ID = "repo-foundry-ai"
-PRODUCT_NAME = "RepoFoundry AI"
+PRODUCT_NAME = "RepoHarnessKit"
+# The existing repofoundry CLI and its --version identity are compatibility contracts.
+CLI_VERSION_NAME = "RepoFoundry AI"
 DEFAULT_REPOSITORY = "XiaoWeiKIN/RepoHarnessKit"
 INSTALL_SCHEMA_VERSION = 1
 MINIMUM_PYTHON = (3, 10)
@@ -497,7 +499,7 @@ def validate_package(root: Path, expected_version: str | None = None) -> str:
         capture_output=True,
         timeout=30,
     )
-    expected = f"{PRODUCT_NAME} {version}"
+    expected = f"{CLI_VERSION_NAME} {version}"
     if result.returncode or result.stdout.strip() != expected:
         detail = result.stderr.strip() or result.stdout.strip() or "no output"
         raise InstallError(f"staged package validation failed: {detail}")
@@ -880,7 +882,7 @@ def _install_package_locked(
             capture_output=True,
             timeout=30,
         )
-        if result.returncode or result.stdout.strip() != f"{PRODUCT_NAME} {version}":
+        if result.returncode or result.stdout.strip() != f"{CLI_VERSION_NAME} {version}":
             detail = result.stderr.strip() or result.stdout.strip() or "no output"
             raise InstallError(f"installed launcher validation failed: {detail}")
 
@@ -954,7 +956,7 @@ def install_package(
 
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(
-        description="Install or upgrade the latest stable RepoFoundry AI release."
+        description="Install or upgrade the latest stable RepoHarnessKit release."
     )
     result.add_argument(
         "--version",
