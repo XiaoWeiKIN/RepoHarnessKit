@@ -1,7 +1,7 @@
 # RepoHarnessKit — versioning and migration entrypoint
 
 This is the current **public navigation page** for distribution and Harness
-migration. The accepted [DD-006 — versioning and Harness migrations](repo-foundry-versioning-and-migrations.md)
+migration. The accepted [DD-006 — versioning and Harness migrations](design-docs/repo-foundry-versioning-and-migrations.md)
 remains the registered, detailed Design, with its historical path and
 provenance unchanged. Earlier version examples inside DD-006 are historical,
 not the currently installed release identity.
@@ -24,8 +24,8 @@ At the present source revision the distribution metadata declares:
 These are checked-in source values, **not** a claim that a GitHub Release or
 a target repository has already upgraded. Repository Spec locks are independent.
 
-Use [release-candidate notes](../releases/0.15.3.md) and the
-[upgrade instructions](../../references/upgrades.md) for version-specific
+Use [release-candidate notes](releases/0.15.3.md) and the
+[upgrade instructions](../references/upgrades.md) for version-specific
 behavior. Preview an upgrade and review customized-file conflicts before
 applying it to any target repository.
 

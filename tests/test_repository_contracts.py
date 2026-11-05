@@ -638,9 +638,9 @@ class RepositoryContractTestCase(unittest.TestCase):
              "repo-foundry-versioning-and-migrations.md", "DD-006"),
         ):
             with self.subTest(public=public):
-                public_text = (documents / public).read_text(encoding="utf-8")
+                public_text = (ROOT / "docs" / public).read_text(encoding="utf-8")
                 legacy_text = (documents / registered).read_text(encoding="utf-8")
-                self.assertIn(f"]({registered})", public_text)
+                self.assertIn(f"](design-docs/{registered})", public_text)
                 self.assertNotIn("artifact_type: design-doc", public_text)
                 self.assertIn(f"id: {design_id}", legacy_text)
         for readme in ("README.md", "README.zh-CN.md"):

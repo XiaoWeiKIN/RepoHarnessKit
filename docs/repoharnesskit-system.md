@@ -8,9 +8,9 @@ with source-owned constraints, deterministic checks, and evidence-oriented workf
 
 The canonical brand files are:
 
-- [repoharnesskit-mark.svg](../../assets/brand/repoharnesskit-mark.svg)
-- [repoharnesskit-icon.svg](../../assets/brand/repoharnesskit-icon.svg)
-- [repoharnesskit-icon.png](../../assets/brand/repoharnesskit-icon.png)
+- [repoharnesskit-mark.svg](../assets/brand/repoharnesskit-mark.svg)
+- [repoharnesskit-icon.svg](../assets/brand/repoharnesskit-icon.svg)
+- [repoharnesskit-icon.png](../assets/brand/repoharnesskit-icon.png)
 
 The original `repofoundry-*` assets remain byte-identical compatibility aliases;
 historical documents, packages, tags and embedded images must not be rewritten
@@ -34,8 +34,8 @@ manifest owners without a separate, versioned compatibility migration.
 
 ## Accepted design and decision history
 
-The registered [DD-004 — system identity and packaging](repo-foundry-system.md)
-and [ADR-008 — historical RepoFoundry AI brand decision](../adr/adr-008_repofoundry-ai-brand.md)
+The registered [DD-004 — system identity and packaging](design-docs/repo-foundry-system.md)
+and [ADR-008 — historical RepoFoundry AI brand decision](adr/adr-008_repofoundry-ai-brand.md)
 retain their original paths, metadata and evidence. They document the prior
 identity at the time of acceptance; this public navigation page does **not**
 create another DD-004 or revise that accepted decision.

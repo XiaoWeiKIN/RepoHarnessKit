@@ -21,14 +21,14 @@ how accepted choices are realized.
 
 ## Current
 
-- [RepoHarnessKit public identity and compatibility](repoharnesskit-system.md) —
+- [RepoHarnessKit public identity and compatibility](../repoharnesskit-system.md) —
   brand-facing navigation; the registered historical DD-004 remains at its old path.
 - [Aggregation Skill packaging baseline](engineering-workflow-packaging.md) —
   ADR-004/005 boundaries; public naming is amended by the RepoFoundry AI
   identity document.
 - [Codex project documentation bootstrap](codex-project-bootstrap.md) —
   compatibility behavior now implemented by the Codex adapter.
-- [RepoHarnessKit versioning and Harness migrations](repoharnesskit-versioning-and-migrations.md) —
+- [RepoHarnessKit versioning and Harness migrations](../repoharnesskit-versioning-and-migrations.md) —
   current-version navigation; registered DD-006 retains its stable reference path.
 - [Engineering Spec resolution and project materialization](engineering-spec-management.md) —
   Catalog and materialization contract; activation is amended by ADR-012.
