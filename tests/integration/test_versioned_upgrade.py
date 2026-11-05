@@ -31,6 +31,11 @@ def inventory(root):
 
 
 class RealVersionedUpgradeTests(unittest.TestCase):
+    source_sha = LEGACY_SHA
+    source_version = "0.15.1"
+    source_core = "1.6.0"
+    source_profile = "adaptive"
+
     @classmethod
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory()
@@ -38,7 +43,7 @@ class RealVersionedUpgradeTests(unittest.TestCase):
         cls.base = Path(cls.tmp.name)
         cls.old = cls.base / "old-source"
         cls.old.mkdir()
-        archive = subprocess.run(["git", "archive", "--format=tar.gz", LEGACY_SHA], cwd=ROOT, capture_output=True, timeout=30)
+        archive = subprocess.run(["git", "archive", "--format=tar.gz", cls.source_sha], cwd=ROOT, capture_output=True, timeout=30)
         if archive.returncode:
             raise RuntimeError("Pinned legacy source unavailable; use a full Git checkout. " + archive.stderr.decode())
         with tarfile.open(fileobj=io.BytesIO(archive.stdout), mode="r:gz") as t:
@@ -55,8 +60,8 @@ class RealVersionedUpgradeTests(unittest.TestCase):
         cls.artifacts = Path(os.environ["RF_UPGRADE_ARTIFACT_DIR"]) if os.environ.get("RF_UPGRADE_ARTIFACT_DIR") else None
         if cls.artifacts:
             cls.artifacts.mkdir(parents=True, exist_ok=True)
-            (cls.artifacts / "legacy-source-provenance.json").write_text(json.dumps(dict(commit=LEGACY_SHA,archive_sha256=hashlib.sha256(archive.stdout).hexdigest(),command=archive.args,exit_code=archive.returncode,stderr=archive.stderr.decode()),indent=2))
-        assert (cls.old / "VERSION").read_text().strip() == "0.15.1"
+            (cls.artifacts / f"{cls.__name__}-source-provenance.json").write_text(json.dumps(dict(commit=cls.source_sha,archive_sha256=hashlib.sha256(archive.stdout).hexdigest(),command=archive.args,exit_code=archive.returncode,stderr=archive.stderr.decode()),indent=2))
+        assert (cls.old / "VERSION").read_text().strip() == cls.source_version
 
     def setUp(self):
         self.test_tmp = tempfile.TemporaryDirectory(dir=self.base)
@@ -66,10 +71,10 @@ class RealVersionedUpgradeTests(unittest.TestCase):
         self.target.mkdir()
         self.catalog, _ = create_git_catalog(self.work)
         self.sequence = 0
-        self.cli(self.old, "bootstrap", "--all-adapters", "--spec-repository", self.catalog.as_uri(), "--spec-version", "0.1.0", "--spec", "languages/go", "--apply")
+        self.cli(self.old, "bootstrap", "--all-adapters", "--governance-profile", self.source_profile, "--spec-repository", self.catalog.as_uri(), "--spec-version", "0.1.0", "--spec", "languages/go", "--apply")
         m = json.loads((self.target / "docs/.engineering/harness.json").read_text())
-        self.assertEqual(m["core"]["version"], "1.6.0")
-        self.assertEqual(m["producer"]["version"], "0.15.1")
+        self.assertEqual(m["core"]["version"], self.source_core)
+        self.assertEqual(m["producer"]["version"], self.source_version)
         self.cli(self.old, "validate", "--harness")
         self.initial = inventory(self.target)
 
@@ -80,7 +85,7 @@ class RealVersionedUpgradeTests(unittest.TestCase):
         p = subprocess.run(argv, cwd=self.target, env=dict(os.environ, GIT_ALLOW_PROTOCOL="file", GIT_TERMINAL_PROMPT="0"), capture_output=True, text=True, timeout=120)
         if self.artifacts:
             record = dict(argv=argv,cwd=str(self.target),start=start,end=datetime.now(timezone.utc).isoformat(),exit_code=p.returncode,stdout=p.stdout,stderr=p.stderr)
-            (self.artifacts / f"{self._testMethodName}-{self.sequence:02d}.json").write_text(json.dumps(record,indent=2))
+            (self.artifacts / f"{type(self).__name__}-{self._testMethodName}-{self.sequence:02d}.json").write_text(json.dumps(record,indent=2))
         self.assertEqual(p.returncode, expected, p.stdout + "\n" + p.stderr)
         return json.loads(p.stdout) if p.stdout and p.returncode == 0 else p.stderr
 
@@ -96,7 +101,7 @@ class RealVersionedUpgradeTests(unittest.TestCase):
         self.assertEqual(inventory(self.target), before, "preview must not mutate old install")
         self.assertEqual((self.target / "docs/.engineering/harness.json").read_bytes(), manifest_before)
         self.assertFalse([a for a in preview["actions"] if a["action"] == "conflict"])
-        self.assertEqual(preview["from"]["core"], "1.6.0")
+        self.assertEqual(preview["from"]["core"], self.source_core)
         self.assertEqual(preview["to"]["core"], CURRENT["core"])
         self.cli(ROOT, "upgrade", "--to", CURRENT["distribution"], "--apply")
         self.cli(ROOT, "validate", "--harness")
@@ -104,6 +109,14 @@ class RealVersionedUpgradeTests(unittest.TestCase):
         m = json.loads((self.target / "docs/.engineering/harness.json").read_text())
         self.assertEqual(m["producer"]["version"], CURRENT["distribution"])
         self.assertEqual(m["core"]["version"], CURRENT["core"])
+        self.assertEqual(m["governance"]["profile"], self.source_profile)
+        for name in (".repo-foundry/skills/repo-foundry-ai/SKILL.md",
+                     ".agents/skills/engineering-specs/SKILL.md",
+                     ".claude/skills/engineering-specs/SKILL.md",
+                     "docs/agent-guides/README.md"):
+            guide = (self.target / name).read_text()
+            self.assertIn("before excluding", guide)
+            self.assertIn("model-visible", guide)
         self.assertEqual({a["id"]:a["version"] for a in m["adapters"]}, CURRENT["adapters"])
         for name, contents in custom.items():
             self.assertEqual((self.target / name).read_bytes(), contents)
@@ -120,6 +133,8 @@ class RealVersionedUpgradeTests(unittest.TestCase):
 
     def test_changed_generated_file_is_rejected_without_any_writes(self):
         paths = (
+            ".repo-foundry/skills/repo-foundry-ai/SKILL.md",
+            ".agents/skills/engineering-specs/SKILL.md",
             ".repo-foundry/engineering-specs/spec_router.py",
             ".agents/skills/engineering-specs/scripts/spec_router.py",
             ".claude/skills/engineering-specs/SKILL.md",
@@ -136,6 +151,14 @@ class RealVersionedUpgradeTests(unittest.TestCase):
                 self.assertIn("Harness upgrade preflight failed", self.cli(ROOT, "upgrade", "--to", CURRENT["distribution"], "--apply", expected=2))
                 self.assertEqual(inventory(self.target), before)
                 p.write_bytes(original)
+
+
+class WorkflowVersionedUpgradeTests(RealVersionedUpgradeTests):
+    """The real 0.15.2 generator is the baseline, not a fabricated manifest."""
+    source_sha = "4c56912785f498232c69722bd6327b92aaed4a04"
+    source_version = "0.15.2"
+    source_core = "1.6.1"
+    source_profile = "strict"
 
 
 if __name__ == "__main__":

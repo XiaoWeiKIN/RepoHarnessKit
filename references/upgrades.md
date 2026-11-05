@@ -8,9 +8,9 @@ migration。schema 迁移必须走 upgrade；schema 3 中追加 adapter 时，bo
 
 ```bash
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.2
+  upgrade --to 0.15.3
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.2 --apply
+  upgrade --to 0.15.3 --apply
 ```
 
 必须先展示 dry-run 结果。只有用户已要求实施升级且计划无 conflict 时才使用
@@ -19,6 +19,12 @@ python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
 合并。`legacy-unversioned` seed 保持原字节，除非它已经与当前模板完全一致。apply
 后必须报告更新路径和验证结果；验证失败由 CLI 回滚。详细兼容矩阵见
 [Bootstrap 契约](bootstrap.md#版本与-harness-升级)。
+
+0.15.3 将 Core 提升到 1.6.2、Codex 到 2.4.4、Claude 到 1.3.3、Portable 到
+1.3.4。任务工作流先审阅候选 Requirement 触发条件再排除，并把原文交付与状态输出
+分开。Router 算法、激活协议 2、Spec Catalog 1.9.0 和已有治理 profile 保持不变。
+升级只替换来源摘要仍匹配的模板；不修改旧执行证据，也不把内部 epoch 状态当作
+模型可见内容完整的证明。参见 [0.15.3 发布候选说明](../docs/releases/0.15.3.md)。
 
 0.15.2 将 Core 提升到 1.6.1、Codex 到 2.4.3、Claude 到 1.3.2、Portable 到
 1.3.3，以恢复 0.15.1 / Core 1.6.0 旧安装的官方升级兼容性。旧 seed 必须仍匹配
