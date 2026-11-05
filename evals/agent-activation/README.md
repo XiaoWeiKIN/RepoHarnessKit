@@ -3,7 +3,7 @@
 This follow-up to [PR #111](https://github.com/XiaoWeiKIN/RepoHarnessKit/pull/111)
 prepares a small real-Agent trial. It **does not run a model**, score provisional
 labels, introduce a Router gate, or claim independent Gold Set acceptance.
-The current host cannot start Codex: the executable is absent. The
+The original 2026-11-04 host could not start Codex: the executable was absent. The
 [host observation](evidence/20261104-preflight.json) records zero Agent trials,
 null activation metrics and unresolved runtime/isolation prerequisites.
 
@@ -77,7 +77,7 @@ python3 -B -m unittest tests.test_agent_activation_pilot -v
 
 `prepare` refuses an existing output or output inside this checkout. It validates
 the original fixture and pinned inputs, previews and applies the official
-`upgrade --to 0.15.2 --governance-profile strict`, then runs Harness and Spec
+`upgrade --to 0.15.3 --governance-profile strict`, then runs Harness and Spec
 validation. Business Go/module and managed Spec bytes must remain unchanged by
 the upgrade. Only the declared **before** snapshots are overlaid afterward.
 Each subject gets fresh one-commit Git history containing only its initial
@@ -163,3 +163,8 @@ No fresh Agent or independent reviewer was launched, and no activation
 accuracy was measured. The next operational prerequisite is an authenticated,
 isolated Agent runner. More Router code or another semantic validator will not
 remove this runtime blocker.
+
+
+## Updated target on current main (2026-11-05)
+
+The prospective preparation now uses distribution 0.15.3 and still requires an authenticated isolated runner and independently frozen labels for any scored Agent trial. The earlier 0.15.2 preflight evidence is historical and has not been rewritten. Preparation is not an executed Agent benchmark; zero model executions remain recorded.

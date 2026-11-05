@@ -20,6 +20,7 @@ class SourcePacketTests(unittest.TestCase):
         protocol = json.loads((ROOT / "evals/agent-activation/protocol.json").read_text())
         self.assertEqual(protocol["source_cases"], list(PILOT.CASE_IDS))
         self.assertEqual(protocol["planned_trials"], 3 * len(PILOT.CASE_IDS))
+        self.assertEqual(protocol["target_distribution"], PILOT.TARGET_VERSION)
         self.assertEqual(protocol["counts"]["agent_trials_started"], 0)
 
     def test_pinned_parent_inputs_load(self):
@@ -65,13 +66,13 @@ class SourcePacketTests(unittest.TestCase):
 
     def test_valid_official_preview(self):
         PILOT.check_preview({"mode": "dry-run", "actions": [{"action": "preserve"}],
-                             "to": {"distribution": "0.15.2", "governance_profile": "strict"}})
+                             "to": {"distribution": "0.15.3", "governance_profile": "strict"}})
 
     def test_conflicting_or_non_strict_preview_rejected(self):
         for change in ({"actions": [{"action": "conflict"}]}, {"actions": None},
-                       {"mode": "apply"}, {"to": {"distribution": "0.15.2", "governance_profile": "adaptive"}}):
+                       {"mode": "apply"}, {"to": {"distribution": "0.15.3", "governance_profile": "adaptive"}}):
             value = {"mode": "dry-run", "actions": [],
-                     "to": {"distribution": "0.15.2", "governance_profile": "strict"}, **change}
+                     "to": {"distribution": "0.15.3", "governance_profile": "strict"}, **change}
             with self.subTest(change=change), self.assertRaises(PILOT.PilotError):
                 PILOT.check_preview(value)
 

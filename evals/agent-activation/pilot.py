@@ -24,7 +24,7 @@ CORPUS = ROOT / "evals/spec-activation/corpus.json"
 CORPUS_SHA256 = "897a792aee32010a45060d1b26846fcf6c8dec27783868405314c9d6519c3796"
 CASE_IDS = ("format-only", "local-name-only", "explain-same-go-path", "ambiguous-boundary")
 PARENT_HEAD = "1e8c6a1d5b5ecfa9262cc9908721702734bc98b1"
-TARGET_VERSION = "0.15.2"
+TARGET_VERSION = "0.15.3"
 
 
 class PilotError(ValueError):

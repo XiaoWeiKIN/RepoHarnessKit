@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "id": "agent-activation-pilot-draft-v1",
+  "id": "agent-activation-pilot-draft-v2",
   "status": "NOT_EXECUTION_READY",
   "parent_pr": 111,
   "parent_head": "1e8c6a1d5b5ecfa9262cc9908721702734bc98b1",
@@ -34,5 +34,6 @@
     "agent_trials_started": 0,
     "activation_recall": null,
     "activation_precision": null
-  }
+  },
+  "target_distribution": "0.15.3"
 }
