@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "agent-activation-pilot-draft-v2",
+  "status": "NOT_EXECUTION_READY",
+  "parent_pr": 111,
+  "parent_head": "1e8c6a1d5b5ecfa9262cc9908721702734bc98b1",
+  "source_corpus_sha256": "897a792aee32010a45060d1b26846fcf6c8dec27783868405314c9d6519c3796",
+  "source_cases": [
+    "format-only",
+    "local-name-only",
+    "explain-same-go-path",
+    "ambiguous-boundary"
+  ],
+  "repetitions_per_case": 3,
+  "planned_trials": 12,
+  "order": "case-01..case-04; repeat three rounds",
+  "governance_treatment": "strict; disposable subjects only",
+  "agent_runtime": "codex; exact version/binary/model not yet selected",
+  "gold_status": "NOT_INDEPENDENTLY_ACCEPTED",
+  "preconditions": [
+    "freeze runtime/model/tool/budget inputs before a native Benchmark Run",
+    "establish host isolation and coordinator-only evidence capture",
+    "freeze independent labels before semantic scoring"
+  ],
+  "not_claimed": [
+    "Agent execution",
+    "independent Gold Set acceptance",
+    "native Hook enforcement",
+    "within-turn scope refresh",
+    "Spec behavioral compliance",
+    "causal improvement"
+  ],
+  "counts": {
+    "agent_trials_started": 0,
+    "activation_recall": null,
+    "activation_precision": null
+  },
+  "target_distribution": "0.15.3"
+}
