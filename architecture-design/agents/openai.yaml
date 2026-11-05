@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Design"
+  short_description: "Design and audit architecture boundaries using change scenarios"
+  default_prompt: "Use $architecture-design to inspect the real system constraints, identify complexity ownership and interface boundaries, compare the simplest correct options, and challenge the design with evidence-backed change scenarios. Do not create or approve DD/ADR artifacts."
