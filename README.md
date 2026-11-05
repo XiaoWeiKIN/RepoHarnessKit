@@ -3,7 +3,7 @@
 [简体中文](README.zh-CN.md) | English
 
 <p align="center">
-  <img src="./assets/brand/repofoundry-icon.svg" alt="Repository harness icon (legacy artwork)" width="128">
+  <img src="./assets/brand/repoharnesskit-icon.svg" alt="RepoHarnessKit brand icon" width="128">
 </p>
 
 <p align="center"><strong>The Agent-Native Engineering System</strong></p>
@@ -622,7 +622,7 @@ an adapter, records the component migrations and creates the new project Skill
 paths. A versioned seed is replaced only when its bytes still match the
 recorded installed SHA-256; customized or provenance-unknown files are
 preserved, and post-write validation failure rolls the migration back. See the
-[versioning and migration design](./docs/design-docs/repo-foundry-versioning-and-migrations.md).
+[versioning and migration design](./docs/design-docs/repoharnesskit-versioning-and-migrations.md).
 
 The project workflow now chooses activation depth before doing governance work.
 Ordinary read-only code explanation, navigation, call-chain tracing, and
@@ -777,8 +777,8 @@ RepoHarnessKit:
 
 - [Root Skill](./SKILL.md)
 - [Bootstrap contract](./references/bootstrap.md)
-- [System identity and packaging](./docs/design-docs/repo-foundry-system.md)
-- [Versioning and Harness migrations](./docs/design-docs/repo-foundry-versioning-and-migrations.md)
+- [System identity and packaging](./docs/design-docs/repoharnesskit-system.md)
+- [Versioning and Harness migrations](./docs/design-docs/repoharnesskit-versioning-and-migrations.md)
 - [Engineering Spec resolution](./docs/design-docs/engineering-spec-management.md)
 - [Agent-neutral Harness and adapters](./docs/design-docs/agent-neutral-harness-adapters.md)
 - [Artifact Metadata Contract](./docs/design-docs/artifact-metadata-contract.md)

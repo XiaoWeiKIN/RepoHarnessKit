@@ -1,4 +1,4 @@
-# RepoFoundry AI Brand Assets
+# RepoHarnessKit Brand Assets
 
 The mark places a forge-orange AI spark inside two graphite repository braces.
 The braces represent a stable, inspectable engineering boundary; the spark
@@ -6,9 +6,13 @@ represents the Agent-ready capability created inside it.
 
 | Asset | Use |
 |---|---|
-| `repofoundry-mark.svg` | Transparent vector master for flexible layouts |
-| `repofoundry-icon.svg` | Warm-white square icon for README and application surfaces |
-| `repofoundry-icon.png` | Raster distribution icon generated from the square SVG |
+| `repoharnesskit-mark.svg` | Canonical transparent vector master |
+| `repoharnesskit-icon.svg` | Canonical square application icon |
+| `repoharnesskit-icon.png` | Canonical raster application icon |
+
+The existing `repofoundry-*.svg` and `repofoundry-icon.png` files remain
+byte-identical compatibility aliases. Do not delete them while external
+pages, prior releases and consumers may still reference the old paths.
 
 ## Palette
 

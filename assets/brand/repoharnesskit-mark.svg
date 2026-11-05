@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 256 256"
+  role="img"
+  aria-labelledby="title description"
+>
+  <title id="title">RepoFoundry AI mark</title>
+  <desc id="description">
+    Two graphite repository braces form a stable mold around a forge-orange AI
+    spark.
+  </desc>
+  <g shape-rendering="geometricPrecision">
+    <path
+      fill="#17202A"
+      d="M96 40 40 88v80l56 48 20-26-44-38v-48l44-38-20-26Z"
+    />
+    <path
+      fill="#17202A"
+      d="m160 40 56 48v80l-56 48-20-26 44-38v-48l-44-38 20-26Z"
+    />
+    <path
+      fill="#FF6B2C"
+      d="M128 82c5 26 20 41 46 46-26 5-41 20-46 46-5-26-20-41-46-46 26-5 41-20 46-46Z"
+    />
+  </g>
+</svg>

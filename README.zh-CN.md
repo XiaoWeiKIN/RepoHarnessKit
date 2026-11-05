@@ -5,7 +5,7 @@ RepoHarnessKit 是面向 AI Coding Agent 的仓库原生工程 Harness 工具集
 简体中文 | [English](README.md)
 
 <p align="center">
-  <img src="./assets/brand/repofoundry-icon.svg" alt="RepoHarnessKit 图标" width="128">
+  <img src="./assets/brand/repoharnesskit-icon.svg" alt="RepoHarnessKit 图标" width="128">
 </p>
 
 <p align="center"><strong>The Agent-Native Engineering System</strong></p>
@@ -565,7 +565,7 @@ Core 与 adapter 契约也继续可读；显式 upgrade 或一次预览过的
 adapter 追加 bootstrap 会记录组件迁移并补齐项目 Skill。versioned seed 只有在文件
 字节仍匹配记录的 installed SHA-256 时才自动替换；定制文件或来源未知文件保持
 原样，写后验证失败会回滚。完整契约见
-[版本与迁移设计](./docs/design-docs/repo-foundry-versioning-and-migrations.md)。
+[版本与迁移设计](./docs/design-docs/repoharnesskit-versioning-and-migrations.md)。
 
 项目工作流现在会先判断激活深度。普通的只读代码解释、导航、调用链追踪和既有行为
 总结，只读取回答所需的代码与文档；不会运行完整 Harness validation、激活 Spec、创建
@@ -693,8 +693,8 @@ RepoHarnessKit：
 
 - [根 Skill](./SKILL.md)
 - [Bootstrap 契约](./references/bootstrap.md)
-- [系统身份与 packaging](./docs/design-docs/repo-foundry-system.md)
-- [版本与 Harness 迁移](./docs/design-docs/repo-foundry-versioning-and-migrations.md)
+- [系统身份与 packaging](./docs/design-docs/repoharnesskit-system.md)
+- [版本与 Harness 迁移](./docs/design-docs/repoharnesskit-versioning-and-migrations.md)
 - [Engineering Spec 解析](./docs/design-docs/engineering-spec-management.md)
 - [Agent-neutral Harness 与 adapters](./docs/design-docs/agent-neutral-harness-adapters.md)
 - [Artifact Metadata Contract](./docs/design-docs/artifact-metadata-contract.md)
