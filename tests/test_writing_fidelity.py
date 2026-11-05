@@ -9,8 +9,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 GUIDE = Path("references/controlled-writing.md")
-SKILLS = ("detailed-design", "engineering-benchmark", "engineering-research",
-          "engineering-design", "engineering-execution-plan", "engineering-case-study")
+SKILLS = ("design-documentation", "engineering-benchmark", "engineering-research",
+          "governed-design", "engineering-execution-plan", "engineering-case-study")
 SECTIONS = ("Preserve meaning while editing", "Precise Chinese technical prose",
             "Optional source-bound prose hints", "Report writing verification")
 EXPECTED_ASSERTIONS = {
@@ -81,8 +81,8 @@ class WritingFidelityTests(unittest.TestCase):
                                        "re", "stat", "sys", "typing"})
 
     def test_self_contained_eval_catalog_extends_existing_cases(self):
-        catalog = json.loads((ROOT / "detailed-design/evals/evals.json").read_text(encoding="utf-8"))
-        self.assertEqual(catalog["skill_name"], "detailed-design")
+        catalog = json.loads((ROOT / "design-documentation/evals/evals.json").read_text(encoding="utf-8"))
+        self.assertEqual(catalog["skill_name"], "design-documentation")
         cases = catalog["evals"]
         ids = [case["id"] for case in cases]
         self.assertEqual(len(ids), len(set(ids)))
