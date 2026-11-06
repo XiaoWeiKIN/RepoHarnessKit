@@ -1,6 +1,6 @@
 # 升级 Harness
 
-先读取发行包的 `VERSION`，再检查目标仓库的 `docs/.engineering/harness.json`。RepoFoundry
+先读取发行包的 `VERSION`，再检查目标仓库的 `docs/.engineering/harness.json`。下面的 `0.15.4` 命令是最近已发布稳定版示例；源码中若存在更新的未发布候选，仅使用该源码包支持的迁移目标。RepoFoundry
 产品版本、Harness schema、Core 版本、各 adapter 版本、激活协议版本和
 Engineering Specs Catalog 版本是独立版本线；不要用 `spec update` 代替 Harness
 migration。schema 迁移必须走 upgrade；schema 3 中追加 adapter 时，bootstrap
@@ -12,6 +12,19 @@ python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
   upgrade --to 0.15.4 --apply
 ```
+
+### 0.15.5 未发布源码候选（仅相同源码包）
+
+当前源码候选的 Core/Codex/Claude 展示名称迁移目标为 `0.15.5`。
+使用此候选源码内的 `foundryctl.py` 才能预览其版本化升级；已发布的
+0.15.4 `repofoundry` CLI 不支持未来目标，不能据此假设已经发布。
+
+```bash
+python3 <candidate-source>/scripts/foundryctl.py --repo . upgrade --to 0.15.5
+```
+
+仅在授权升级、预览无冲突且实际使用对应候选源码时，才允许另行执行 apply。
+正式 GitHub Release 发布状态以仓库 Releases 为准。
 
 必须先展示 dry-run 结果。只有用户已要求实施升级且计划无 conflict 时才使用
 `--apply`。versioned seed 只有在实际 SHA-256 等于 manifest 记录的
@@ -83,3 +96,12 @@ remain unchanged. Historical pinned releases keep their original Skill paths;
 the installer verifies a complete historical or modern layout, not a mix.
 Preview and validate project upgrades; user-owned and modified generated files
 must not be silently overwritten.
+
+## 0.15.5 candidate — public workflow naming only
+
+此源码候选将展示名称统一为 RepoHarnessKit，不更改 `repo-foundry-ai`
+Skill ID、`repofoundry` 命令、`.repo-foundry/`、`foundryctl.py`、Manifest Owner，
+也不改变命令 `--version` 的兼容输出。Core、Codex、Claude 模板发生字节变化，
+对应候选版本分别为 `1.6.3`、`2.4.5`、`1.3.4`，Portable 保持 `1.3.4`。
+预览旧项目升级，定制文件冲突必须显式处理；已发布 `v0.15.4` 不被改写。
+参见 [0.15.5 候选说明](../docs/releases/0.15.5.md)。

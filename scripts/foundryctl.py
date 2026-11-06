@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bootstrap and validate the RepoFoundry AI project Harness."""
+"""Bootstrap and validate the RepoHarnessKit project Harness."""
 
 from __future__ import annotations
 
@@ -52,9 +52,9 @@ HARNESS_OWNER = "repo-foundry"
 LEGACY_HARNESS_OWNERS = frozenset({"engineering-workflow"})
 CODEX_HARNESS_PROFILE = "codex"
 CODEX_HARNESS_PROFILE_VERSION = "1.0.0"
-CORE_HARNESS_VERSION = "1.6.2"
-CODEX_ADAPTER_VERSION = "2.4.4"
-CLAUDE_ADAPTER_VERSION = "1.3.3"
+CORE_HARNESS_VERSION = "1.6.3"
+CODEX_ADAPTER_VERSION = "2.4.5"
+CLAUDE_ADAPTER_VERSION = "1.3.4"
 PORTABLE_ADAPTER_VERSION = "1.3.4"
 ACTIVATION_PROTOCOL_VERSION = 2
 GOVERNANCE_POLICY_SCHEMA = 1
@@ -4503,7 +4503,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     validate_parser = sub.add_parser(
         "validate",
-        help="Validate the RepoFoundry AI project Harness",
+        help="Validate the RepoHarnessKit project Harness",
     )
     validate_parser.add_argument(
         "--harness",

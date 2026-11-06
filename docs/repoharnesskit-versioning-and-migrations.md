@@ -25,9 +25,9 @@ the latest published package. The installed `repofoundry` command can upgrade
 only to its own bundled distribution version; it cannot fetch a future migration
 just because a newer `VERSION` exists on `main`.
 
-For published release history, consult [GitHub Releases](https://github.com/XiaoWeiKIN/RepoHarnessKit/releases/latest).
-The published [v0.15.4 notes](releases/0.15.4.md) are a versioned record,
-not a live statement about all future source checkouts.
+For published release history, use [v0.15.4 release notes](releases/0.15.4.md).
+For the **unpublished 0.15.5 candidate** and its versioned workflow display
+changes, use [candidate notes](releases/0.15.5.md).
 Follow the [upgrade instructions](../references/upgrades.md) and preview all
 customized-file conflicts before applying. Repository Spec locks remain
 independent of the distribution version.

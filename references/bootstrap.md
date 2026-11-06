@@ -61,7 +61,7 @@ adapter ID 不得重复，生成路径不得发生 ownership collision。现有 
 - 同时传 `--profile` 与 `--adapter` 会失败；
 - 两者都省略时暂时默认 `codex`，并返回
   `HARNESS_ADAPTER_DEFAULT_DEPRECATED`；
-- schema 1/2 只读兼容，只有显式 `upgrade --to 0.15.4 --apply` 写 schema 3。
+- schema 1/2 只读兼容，只有显式 `upgrade --to VERSION --apply`（VERSION 为已安装发行包支持的目标版本）写 schema 3。
 
 ## Core 与 adapter 的安装结构
 
@@ -138,7 +138,7 @@ enforcement 为 CLI/advisory，不声称原生拦截写入。
 
 ## 受控技术写作入口
 
-当前源码的 Core `1.6.2` 与 Codex adapter `2.4.4` 保留显式写作路由；版本仍为发布候选。
+当前源码的 Core `1.6.3` 与 Codex adapter `2.4.5` 保留显式写作路由；分发版本 `0.15.5` 是未发布的候选。
 新建 Codex `AGENTS.md` 和共享 project Skill 会要求：撰写、修订或评审工程正文前，
 先解析负责该工作的专业 Skill，再读取该 Skill 内的 `references/controlled-writing.md`。
 此路径相对于专业 Skill，不相对于目标仓库或共享 project Skill。
@@ -177,7 +177,7 @@ adapter 能力由 `adapter list` 的结构化输出声明：
 
 `docs/.engineering/harness.json` 记录独立版本面和每个文件的唯一 owner：
 
-下例对应 RepoFoundry `0.15.4`：Core `1.6.2`、Codex `2.4.4`、Claude `1.3.3`、
+下例是已发布 RepoHarnessKit `v0.15.4` 的历史清单示例：Core `1.6.2`、Codex `2.4.4`、Claude `1.3.3`、
 Portable `1.3.4`。
 
 ```json
@@ -220,19 +220,19 @@ Portable `1.3.4`。
 `owner_kind: core|adapter`；adapter 文件另有 `owner_id`。未知未来 schema、Core、
 adapter、template、producer 或 migration 版本一律 fail closed。
 
-RepoFoundry distribution、Harness schema、Core、每个 adapter、Spec Activation
+RepoHarnessKit distribution、Harness schema、Core、每个 adapter、Spec Activation
 protocol 与 Engineering Specifications Catalog 分别版本化。改变 Codex Hook 字节不应
 提升 Catalog；改变规范正文也不应提升 Codex adapter。
 
 ## 版本与 Harness 升级
 
-当前迁移目标为 `0.15.4`：
+从本源码候选发行包运行时，迁移目标为 `0.15.5`（尚未发布）：
 
 ```bash
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.4
+  upgrade --to 0.15.5
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.4 --apply
+  upgrade --to 0.15.5 --apply
 ```
 
 0.8.0 引入、并由后续版本保持的 migration 会以 additive 方式创建
@@ -249,8 +249,8 @@ python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
 - 定制的 repository document：保留原字节并清除不可信模板 provenance；
 - schema 2 的 Codex profile 映射为 `codex@2.0.0` adapter；
 - 安装唯一的 Core activation engine，并在来源可证明时把旧 Router 改成薄 adapter；
-- schema 3 的旧 Core 与 adapter 版本保持可读；升级到 Core `1.6.2`、Codex
-  `2.4.4`、Claude `1.3.3`、Portable `1.3.4` 时按已记录 provenance 替换生成文件并记录
+- schema 3 的旧 Core 与 adapter 版本保持可读；升级到候选 Core `1.6.3`、Codex
+  `2.4.5`、Claude `1.3.4`、Portable `1.3.4` 时按已记录 provenance 替换生成文件并记录
   组件 migration；
 - Spec manifest、lock、managed Markdown 与 Catalog 版本不参与 Harness migration；
 - 写入后 validation 失败：恢复全部触碰文件并清理本次创建的空目录；

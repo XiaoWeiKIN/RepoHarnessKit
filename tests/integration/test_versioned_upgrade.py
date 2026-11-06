@@ -161,5 +161,33 @@ class WorkflowVersionedUpgradeTests(RealVersionedUpgradeTests):
     source_profile = "strict"
 
 
+class Published0154UpgradeTests(RealVersionedUpgradeTests):
+    """Real published v0.15.4 generator upgrades to the naming candidate."""
+    source_sha = "6ac7ed3004abe7bd1dba927785d9ddad38c75b39"
+    source_version = "0.15.4"
+    source_core = "1.6.2"
+    source_profile = "adaptive"
+
+    def test_published_skills_upgrade_display_without_renaming_identity(self):
+        self.cli(ROOT, "upgrade", "--to", CURRENT["distribution"], "--apply")
+        for name in (
+            ".repo-foundry/skills/repo-foundry-ai/SKILL.md",
+            ".agents/skills/repo-foundry-ai/SKILL.md",
+            ".claude/skills/repo-foundry-ai/SKILL.md",
+        ):
+            with self.subTest(name=name):
+                text = (self.target / name).read_text(encoding="utf-8")
+                self.assertIn("name: repo-foundry-ai", text)
+                self.assertIn("# RepoHarnessKit", text)
+        installed = json.loads((self.target / "docs/.engineering/harness.json").read_text())
+        self.assertEqual(installed["owner"], "repo-foundry")
+        self.assertEqual(installed["producer"]["version"], CURRENT["distribution"])
+        self.assertEqual(installed["core"]["version"], CURRENT["core"])
+        self.assertEqual(
+            {x["id"]: x["version"] for x in installed["adapters"]},
+            CURRENT["adapters"],
+        )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

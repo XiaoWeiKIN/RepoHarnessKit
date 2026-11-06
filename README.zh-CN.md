@@ -261,6 +261,10 @@ curl -fsSL https://raw.githubusercontent.com/XiaoWeiKIN/RepoHarnessKit/main/inst
 安装器把 Release tag 解析为不可变 commit，记录归档 SHA-256，并在激活前验证
 暂存包。
 
+目前已发布的稳定版是 **0.15.4**。源码中的 **0.15.5** 仅是未发布候选，
+用于 Core/Codex/Claude 的项目 Skill 展示名称升级；发布前不能假定已安装的
+0.15.4 CLI 能处理 `upgrade --to 0.15.5`。
+
 项目迁移保持独立，并且默认只预览。发行包升级后，在每个既有项目中执行以下命令；
 需要迁移到其他版本时，把 `0.15.4` 替换为已安装的目标版本：
 
