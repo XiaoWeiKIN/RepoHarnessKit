@@ -290,6 +290,11 @@ and is a no-op when that release is already active. It resolves the release tag
 to an immutable commit, records the archive SHA-256, and validates the staged
 package before activation.
 
+The latest published distribution is **0.15.4**. Source `VERSION` **0.15.5**
+is an **unpublished candidate** for the new Core/Codex/Claude project Skill
+branding. Do not install or use `upgrade --to 0.15.5` with the published 0.15.4
+CLI; a future released installer must provide the matching target first.
+
 Repository migration remains a separate, preview-first operation. After a
 distribution upgrade, run this in each existing project and replace `0.15.4`
 with the installed target version when necessary:
