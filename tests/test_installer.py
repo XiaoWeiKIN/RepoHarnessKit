@@ -31,12 +31,12 @@ class InstallerTestCase(unittest.TestCase):
         self.assertEqual(installer.CLI_VERSION_NAME, "RepoFoundry AI")
         with mock.patch("builtins.print") as printed:
             installer.print_human({
-                "version": "0.15.4", "action": "installed",
+                "version": CURRENT_VERSION, "action": "installed",
                 "home": "/tmp/repoharnesskit-demo",
                 "cli": "/tmp/bin/repofoundry",
                 "host_integrations": [], "backups": [],
             })
-        self.assertIn("RepoHarnessKit 0.15.4 installed", printed.call_args_list[0].args[0])
+        self.assertIn(f"RepoHarnessKit {CURRENT_VERSION} installed", printed.call_args_list[0].args[0])
 
     def run_installer(
         self,

@@ -496,11 +496,11 @@ class RepositoryContractTestCase(unittest.TestCase):
             (ROOT / "SKILL.md").read_text(encoding="utf-8"),
         )
         self.assertIn(
-            "# RepoFoundry AI",
+            "# RepoHarnessKit",
             (ROOT / "SKILL.md").read_text(encoding="utf-8"),
         )
         self.assertIn(
-            'display_name: "RepoFoundry AI"',
+            'display_name: "RepoHarnessKit"',
             (ROOT / "agents" / "openai.yaml").read_text(encoding="utf-8"),
         )
         self.assertIn(
@@ -509,7 +509,7 @@ class RepositoryContractTestCase(unittest.TestCase):
         )
         self.assertEqual(
             (ROOT / "VERSION").read_text(encoding="utf-8").strip(),
-            "0.15.4",
+            "0.15.5",
         )
         for relative in (
             "SKILL.md",
@@ -597,6 +597,46 @@ class RepositoryContractTestCase(unittest.TestCase):
             content = document.read_text(encoding="utf-8")
             self.assertIn(command, content)
             self.assertIn(f"{command} --host claude", content)
+
+    def test_public_naming_and_version_sources_are_consistent(self) -> None:
+        import json
+
+        version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        metadata = json.loads((ROOT / "release.json").read_text(encoding="utf-8"))
+        self.assertEqual(version, "0.15.5")
+        self.assertEqual(metadata["distribution"], version)
+        self.assertEqual(metadata["core"], "1.6.3")
+        self.assertEqual(metadata["adapters"]["codex"], "2.4.5")
+        self.assertEqual(metadata["adapters"]["claude"], "1.3.4")
+        self.assertEqual(metadata["adapters"]["portable"], "1.3.4")
+        for relative in (
+            "assets/core/repo-foundry-ai/SKILL.md.template",
+            "assets/adapters/codex/repo-foundry-ai/SKILL.md.template",
+            "assets/adapters/claude/repo-foundry-ai/SKILL.md.template",
+        ):
+            guide = (ROOT / relative).read_text(encoding="utf-8")
+            self.assertIn("name: repo-foundry-ai", guide)
+            self.assertIn("# RepoHarnessKit", guide)
+            self.assertNotIn("# RepoFoundry AI", guide)
+        root = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+        agent = (ROOT / "agents/openai.yaml").read_text(encoding="utf-8")
+        self.assertIn("name: repo-foundry-ai", root)
+        self.assertIn("# RepoHarnessKit", root)
+        self.assertIn('display_name: "RepoHarnessKit"', agent)
+        self.assertIn("$repo-foundry-ai", agent)
+        nav = (ROOT / "docs/repoharnesskit-versioning-and-migrations.md").read_text(encoding="utf-8")
+        self.assertIn("](../VERSION)", nav)
+        self.assertIn("](../release.json)", nav)
+        self.assertIn("GitHub Releases", nav)
+        self.assertNotIn("`0.15.3`", nav)
+        legacy = (ROOT / "docs/adr/adr-008_repofoundry-ai-brand.md").read_text(encoding="utf-8")
+        self.assertIn("Use RepoFoundry AI", legacy)
+        public = (ROOT / "docs/repoharnesskit-system.md").read_text(encoding="utf-8")
+        self.assertIn("historical RepoFoundry AI brand decision", public)
+        self.assertIn("not** been", public)
+        for readme in ("README.md", "README.zh-CN.md"):
+            text = (ROOT / readme).read_text(encoding="utf-8")
+            self.assertIn("Historical" if readme == "README.md" else "历史", text)
 
     def test_repoharnesskit_brand_assets_and_legacy_aliases_are_valid(self) -> None:
         brand = ROOT / "assets" / "brand"

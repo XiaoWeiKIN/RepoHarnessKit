@@ -1,9 +1,9 @@
 ---
 name: repo-foundry-ai
-description: "Apply this repository's RepoFoundry workflow to changes, formal reviews, or Harness operations. Ordinary code explanation and navigation need no activation."
+description: "Apply this repository's RepoHarnessKit workflow to changes, formal reviews, or Harness operations. Ordinary code explanation and navigation need no activation."
 ---
 
-# RepoFoundry AI
+# RepoHarnessKit
 
 Do not auto-trigger for ordinary read-only code explanation or navigation.
 

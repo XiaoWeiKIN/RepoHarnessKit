@@ -36,9 +36,13 @@ manifest owners without a separate, versioned compatibility migration.
 
 The registered [DD-004 — system identity and packaging](design-docs/repo-foundry-system.md)
 and [ADR-008 — historical RepoFoundry AI brand decision](adr/adr-008_repofoundry-ai-brand.md)
-retain their original paths, metadata and evidence. They document the prior
-identity at the time of acceptance; this public navigation page does **not**
-create another DD-004 or revise that accepted decision.
+retain their original paths, metadata and evidence. The public RepoHarnessKit
+name is reflected in the merged [README branding PR #86](https://github.com/XiaoWeiKIN/RepoHarnessKit/pull/86),
+[public filename and installer-display PR #114](https://github.com/XiaoWeiKIN/RepoHarnessKit/pull/114),
+and the [v0.15.4 release](https://github.com/XiaoWeiKIN/RepoHarnessKit/releases/tag/v0.15.4).
+ADR-008 records the earlier accepted naming decision; it has **not** been
+silently superseded, rewritten, or presented here as approval for the new name.
+Any formal ADR replacement requires a separate governed decision.
 
 For the current distribution and migration workflow see
 [RepoHarnessKit versioning and migrations](repoharnesskit-versioning-and-migrations.md).

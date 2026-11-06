@@ -1,12 +1,12 @@
 ---
 name: repo-foundry-ai
-description: "Apply this repository's RepoFoundry workflow to changes, formal reviews, or Harness operations. Ordinary code explanation and navigation need no activation."
+description: "Apply this repository's RepoHarnessKit workflow to changes, formal reviews, or Harness operations. Ordinary code explanation and navigation need no activation."
 ---
 
-# RepoFoundry AI project workflow
+# RepoHarnessKit project workflow
 
 Use this Skill for repository changes, formal review, defect diagnosis,
-engineering contracts, Harness operations, or explicit RepoFoundry requests.
+engineering contracts, Harness operations, or explicit RepoHarnessKit requests.
 Treat repository state as the source of truth; do not depend on a user-home installation path.
 
 ## Choose the activation depth
