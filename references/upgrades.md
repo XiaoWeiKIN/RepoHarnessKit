@@ -13,6 +13,19 @@ python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
   upgrade --to 0.15.4 --apply
 ```
 
+### 0.15.5 未发布源码候选（仅相同源码包）
+
+当前源码候选的 Core/Codex/Claude 展示名称迁移目标为 `0.15.5`。
+使用此候选源码内的 `foundryctl.py` 才能预览其版本化升级；已发布的
+0.15.4 `repofoundry` CLI 不支持未来目标，不能据此假设已经发布。
+
+```bash
+python3 <candidate-source>/scripts/foundryctl.py --repo . upgrade --to 0.15.5
+```
+
+仅在授权升级、预览无冲突且实际使用对应候选源码时，才允许另行执行 apply。
+正式 GitHub Release 发布状态以仓库 Releases 为准。
+
 必须先展示 dry-run 结果。只有用户已要求实施升级且计划无 conflict 时才使用
 `--apply`。versioned seed 只有在实际 SHA-256 等于 manifest 记录的
 `installed_sha256` 时才可自动替换；修改过的 versioned seed 必须停止并要求人工
