@@ -1,4 +1,4 @@
 interface:
-  display_name: "RepoFoundry AI"
+  display_name: "RepoHarnessKit"
   short_description: "Bootstrap an Agent-neutral AI engineering system"
   default_prompt: "Use $repo-foundry-ai to inventory this repository, preview an Agent-neutral Harness Core and suitable adapters, lock the selected Engineering Specs, validate the result, and route follow-up work."

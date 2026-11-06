@@ -496,11 +496,11 @@ class RepositoryContractTestCase(unittest.TestCase):
             (ROOT / "SKILL.md").read_text(encoding="utf-8"),
         )
         self.assertIn(
-            "# RepoFoundry AI",
+            "# RepoHarnessKit",
             (ROOT / "SKILL.md").read_text(encoding="utf-8"),
         )
         self.assertIn(
-            'display_name: "RepoFoundry AI"',
+            'display_name: "RepoHarnessKit"',
             (ROOT / "agents" / "openai.yaml").read_text(encoding="utf-8"),
         )
         self.assertIn(
@@ -597,6 +597,24 @@ class RepositoryContractTestCase(unittest.TestCase):
             content = document.read_text(encoding="utf-8")
             self.assertIn(command, content)
             self.assertIn(f"{command} --host claude", content)
+
+    def test_public_navigation_uses_live_version_sources_and_historical_adr_labels(self) -> None:
+        nav = (ROOT / "docs/repoharnesskit-versioning-and-migrations.md").read_text(encoding="utf-8")
+        self.assertIn("](../VERSION)", nav)
+        self.assertIn("](../release.json)", nav)
+        self.assertIn("GitHub Releases", nav)
+        self.assertNotIn("`0.15.3`", nav)
+        brand = (ROOT / "docs/repoharnesskit-system.md").read_text(encoding="utf-8")
+        self.assertIn("historical RepoFoundry AI brand decision", brand)
+        self.assertIn("not** been", brand)
+        english = (ROOT / "README.md").read_text(encoding="utf-8")
+        chinese = (ROOT / "README.zh-CN.md").read_text(encoding="utf-8")
+        self.assertIn("Historical RepoFoundry AI brand decision", english)
+        self.assertIn("历史 RepoFoundry AI 品牌决策", chinese)
+        self.assertIn("# RepoHarnessKit", (ROOT / "SKILL.md").read_text(encoding="utf-8"))
+        self.assertIn('display_name: "RepoHarnessKit"', (ROOT / "agents/openai.yaml").read_text(encoding="utf-8"))
+        self.assertIn("name: repo-foundry-ai", (ROOT / "SKILL.md").read_text(encoding="utf-8"))
+        self.assertEqual((ROOT / "VERSION").read_text(encoding="utf-8").strip(), "0.15.4")
 
     def test_repoharnesskit_brand_assets_and_legacy_aliases_are_valid(self) -> None:
         brand = ROOT / "assets" / "brand"

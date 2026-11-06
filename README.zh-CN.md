@@ -38,7 +38,7 @@ flowchart LR
 - **Repository Harness** 是持久留在目标仓库里的工程环境。
 - **Capability Skills** 负责架构分析、专业证据与治理工作流，不把每项任务都变成文档。
 
-`Workflow` 描述某一项能力如何运行；RepoFoundry 提供承载、组合和验证这些流程的
+`Workflow` 描述某一项能力如何运行；RepoHarnessKit 提供承载、组合和验证这些流程的
 系统。
 
 ## 八个 Skill 通过清晰边界协作
@@ -99,7 +99,7 @@ Agent 可以搜集证据并起草决定。Research 结束和 ADR 接受仍由人
 
 ## 目标仓库会出现什么
 
-RepoFoundry 只创建已选择能力拥有的路径。完整使用后，目标仓库可能包含：
+RepoHarnessKit 只创建已选择能力拥有的路径。完整使用后，目标仓库可能包含：
 
 ```text
 target-repository/
@@ -165,7 +165,7 @@ Bootstrap 不会编造仓库事实。未知命令、Owner、架构、SLO 和安�
 
 ## 一次安装，逐仓库启用
 
-RepoFoundry 包含两个相互独立的作用域。**发行包安装**把 CLI 和可选的个人 Skill
+RepoHarnessKit 包含两个相互独立的作用域。**发行包安装**把 CLI 和可选的个人 Skill
 入口放进用户环境；**仓库 Bootstrap**只向明确指定的仓库写入版本化 Harness 与
 项目 Skills。安装或升级发行包不会扫描、修改任何项目仓库。
 
@@ -557,7 +557,7 @@ Bootstrap、Harness 升级与 Spec 写操作默认先预览。Bootstrap 只创�
 保留仓库已有文件。adapter 注册的 instruction file 必须满足自身预算；Codex
 `AGENTS.md` 仍不得超过 100 个物理行。
 
-RepoFoundry `0.15.4` 使用 Harness schema `3`、Harness Core `1.6.2`、Codex
+最近已发布的 RepoHarnessKit `v0.15.4` 使用 Harness schema `3`、Harness Core `1.6.2`、Codex
 adapter `2.4.4`、Claude adapter `1.3.3`、Portable adapter `1.3.4` 与激活协议
 `2`；它们与 Engineering Specs Catalog 各自独立演进。schema `1` 和 `2` 继续
 可读，但只有显式执行 `upgrade --to 0.15.4 --apply` 才会迁移。较早的 schema `3`
@@ -724,10 +724,10 @@ RepoHarnessKit：
 决定与实施：
 
 - [ADR-007 — 采用 RepoFoundry](./docs/adr/adr-007_repo-foundry-identity.md)
-- [ADR-008 — 对外使用 RepoHarnessKit](./docs/adr/adr-008_repofoundry-ai-brand.md)
-- [ADR-009 — 根 Skill 名称与 RepoHarnessKit 对齐](./docs/adr/adr-009_align-repofoundry-ai-skill-name.md)
+- [ADR-008 — 历史 RepoFoundry AI 品牌决策](./docs/adr/adr-008_repofoundry-ai-brand.md)
+- [ADR-009 — 历史 repo-foundry-ai Skill 命名](./docs/adr/adr-009_align-repofoundry-ai-skill-name.md)
 - [ADR-011 — 分离 Core 与 Agent adapters](./docs/adr/adr-011_agent-neutral-harness-adapters.md)
 - [ADR-012 — 分离 Spec 激活与 runtime adapters](./docs/adr/adr-012_agent-neutral-spec-activation.md)
 - [ADR-014 — 治理制品元数据契约（proposed）](./docs/adr/adr-014_governed-artifact-metadata-contract.md)
-- [EP-006 — 迁移到 RepoHarnessKit](./docs/exec-plans/active/ep-006_migrate-to-repo-foundry/EXECPLAN.md)
+- [EP-006 — 历史 RepoFoundry 迁移](./docs/exec-plans/active/ep-006_migrate-to-repo-foundry/EXECPLAN.md)
 - [EP-010 — 实现 Agent-neutral adapters](./docs/exec-plans/completed/ep-010_implement-agent-neutral-adapters/EXECPLAN.md)

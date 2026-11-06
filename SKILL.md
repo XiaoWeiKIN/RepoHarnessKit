@@ -1,9 +1,9 @@
 ---
 name: repo-foundry-ai
-description: 初始化、升级或诊断 RepoFoundry 仓库 Harness，配置 Agent adapter 与 Engineering Specs。普通编码、代码解释和文档写作直接使用项目约定或对应专业 skill。
+description: 初始化、升级或诊断 RepoHarnessKit 仓库 Harness，配置 Agent adapter 与 Engineering Specs。普通编码、代码解释和文档写作直接使用项目约定或对应专业 skill。
 ---
 
-# RepoFoundry AI
+# RepoHarnessKit
 
 管理仓库共享的工程入口、adapter 与规范安装。专业制品由各自的 skill 持有。
 
@@ -93,6 +93,6 @@ Harness 操作先解释 create、preserve、conflict 对项目的实际影响，
   Requirement 并保留已验证原文，恢复上下文时运行 `rehydrate`。
 - Core 保持产品中立；adapter 持有宿主发现、事件与信任配置。Hook 生效需要仓库
   信任和精确命令审查；未启用 Hook 时依赖显式 CLI 检查，不声称机械强制。
-- RepoFoundry 的有效 Spec enforcement 上限是 Advisory，不声称 finding lifecycle。
+- RepoHarnessKit 的有效 Spec enforcement 上限是 Advisory，不声称 finding lifecycle。
 - 对受影响行为执行适当验证并报告结果。Explore 使用普通说明；Build/Governed 的
   receipt 与交接由项目 Router 约定，不能用格式化汇报代替实际检查。

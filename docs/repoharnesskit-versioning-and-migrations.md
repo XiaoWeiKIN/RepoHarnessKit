@@ -6,28 +6,31 @@ remains the registered, detailed Design, with its historical path and
 provenance unchanged. Earlier version examples inside DD-006 are historical,
 not the currently installed release identity.
 
-## Checked-in version planes
+## Version sources, not copied version constants
 
-At the present source revision the distribution metadata declares:
+The **checked-in source** and the **latest published distribution** are
+different states. Read source versions from the maintained files instead of
+copying a fixed number into this navigation page:
 
-| Plane | Version |
+| Plane | Authoritative source |
 |---|---|
-| Distribution (`VERSION`) | `0.15.3` |
-| Harness schema | `3` |
-| Harness Core | `1.6.2` |
-| Codex adapter | `2.4.4` |
-| Claude adapter | `1.3.3` |
-| Portable adapter | `1.3.4` |
-| Activation protocol | `2` |
-| Default EngineeringSpecifications Catalog | `1.9.0` |
+| Checked-in distribution candidate | [`VERSION`](../VERSION) |
+| Harness Core and adapter versions | [`release.json`](../release.json) |
+| Harness schema and activation protocol | [`release.json`](../release.json) |
+| Default EngineeringSpecifications Catalog | [`release.json`](../release.json) |
+| Latest published distribution | [GitHub Releases](https://github.com/XiaoWeiKIN/RepoHarnessKit/releases/latest) |
 
-These are checked-in source values, **not** a claim that a GitHub Release or
-a target repository has already upgraded. Repository Spec locks are independent.
+The source checkout may carry an **unpublished release candidate** ahead of
+the latest published package. The installed `repofoundry` command can upgrade
+only to its own bundled distribution version; it cannot fetch a future migration
+just because a newer `VERSION` exists on `main`.
 
-Use [release-candidate notes](releases/0.15.3.md) and the
-[upgrade instructions](../references/upgrades.md) for version-specific
-behavior. Preview an upgrade and review customized-file conflicts before
-applying it to any target repository.
+For published release history, consult [GitHub Releases](https://github.com/XiaoWeiKIN/RepoHarnessKit/releases/latest).
+The published [v0.15.4 notes](releases/0.15.4.md) are a versioned record,
+not a live statement about all future source checkouts.
+Follow the [upgrade instructions](../references/upgrades.md) and preview all
+customized-file conflicts before applying. Repository Spec locks remain
+independent of the distribution version.
 
 Brand files and the installer display are labeled `RepoHarnessKit`; the
 `repofoundry` command, `foundryctl.py`, `repo-foundry-ai` Skill ID,
