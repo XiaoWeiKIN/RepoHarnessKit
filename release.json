@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "distribution": "0.15.3",
+  "distribution": "0.15.4",
   "core": "1.6.2",
   "adapters": {
     "codex": "2.4.4",

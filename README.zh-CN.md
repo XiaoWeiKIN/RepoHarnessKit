@@ -262,11 +262,11 @@ curl -fsSL https://raw.githubusercontent.com/XiaoWeiKIN/RepoHarnessKit/main/inst
 暂存包。
 
 项目迁移保持独立，并且默认只预览。发行包升级后，在每个既有项目中执行以下命令；
-需要迁移到其他版本时，把 `0.15.3` 替换为已安装的目标版本：
+需要迁移到其他版本时，把 `0.15.4` 替换为已安装的目标版本：
 
 ```bash
-repofoundry --repo . upgrade --to 0.15.3
-repofoundry --repo . upgrade --to 0.15.3 --apply
+repofoundry --repo . upgrade --to 0.15.4
+repofoundry --repo . upgrade --to 0.15.4 --apply
 repofoundry --repo . validate
 ```
 
@@ -514,9 +514,9 @@ repofoundry --repo . \
 repofoundry --repo . validate --harness
 repofoundry --repo . validate --adapter codex
 repofoundry --repo . validate --adapter claude
-repofoundry --repo . upgrade --to 0.15.3
-repofoundry --repo . upgrade --to 0.15.3 --governance-profile adaptive
-repofoundry --repo . upgrade --to 0.15.3 --apply
+repofoundry --repo . upgrade --to 0.15.4
+repofoundry --repo . upgrade --to 0.15.4 --governance-profile adaptive
+repofoundry --repo . upgrade --to 0.15.4 --apply
 
 repofoundry --repo . spec plan
 repofoundry --repo . spec sync --apply
@@ -557,10 +557,10 @@ Bootstrap、Harness 升级与 Spec 写操作默认先预览。Bootstrap 只创�
 保留仓库已有文件。adapter 注册的 instruction file 必须满足自身预算；Codex
 `AGENTS.md` 仍不得超过 100 个物理行。
 
-RepoFoundry `0.15.3` 使用 Harness schema `3`、Harness Core `1.6.2`、Codex
+RepoFoundry `0.15.4` 使用 Harness schema `3`、Harness Core `1.6.2`、Codex
 adapter `2.4.4`、Claude adapter `1.3.3`、Portable adapter `1.3.4` 与激活协议
 `2`；它们与 Engineering Specs Catalog 各自独立演进。schema `1` 和 `2` 继续
-可读，但只有显式执行 `upgrade --to 0.15.3 --apply` 才会迁移。较早的 schema `3`
+可读，但只有显式执行 `upgrade --to 0.15.4 --apply` 才会迁移。较早的 schema `3`
 Core 与 adapter 契约也继续可读；显式 upgrade 或一次预览过的
 adapter 追加 bootstrap 会记录组件迁移并补齐项目 Skill。versioned seed 只有在文件
 字节仍匹配记录的 installed SHA-256 时才自动替换；定制文件或来源未知文件保持
