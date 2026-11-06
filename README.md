@@ -18,7 +18,7 @@ decisions, execution plans, and one deterministic validation path.
 
 RepoHarnessKit is a repository-native engineering harness toolkit for AI coding agents. It provides repository-local context, guarded workflows, evidence contracts, and deterministic checks without replacing the agent runtime.
 
-The repository remains the source of truth. RepoFoundry does not depend on one
+The repository remains the source of truth. RepoHarnessKit does not depend on one
 model, agent, editor, or Git hosting provider.
 
 ## One system, four layers
@@ -42,7 +42,7 @@ flowchart LR
   repository.
 - **Capability Skills** provide architecture analysis, specialized evidence and governed workflows without turning every task into a document.
 
-`Workflow` describes how an individual capability runs. RepoFoundry is the
+`Workflow` describes how an individual capability runs. RepoHarnessKit is the
 system that makes those workflows composable and verifiable.
 
 ## Eight Skills collaborate through clear boundaries
@@ -108,7 +108,7 @@ acceptance remain explicit human authority boundaries.
 
 ## What appears in a target repository
 
-RepoFoundry creates only the paths owned by a selected capability. A fully used
+RepoHarnessKit creates only the paths owned by a selected capability. A fully used
 target may contain:
 
 ```text
@@ -186,7 +186,7 @@ An explicitly executed command can now produce a [Revision-bound Verification Re
 
 ## Install once, enable each repository explicitly
 
-RepoFoundry has two independent scopes. The **distribution installation** puts
+RepoHarnessKit has two independent scopes. The **distribution installation** puts
 the CLI and optional personal Skill entrypoints in your user environment. The
 **repository Bootstrap** writes a versioned Harness and project Skills only to
 the repository you select. Installing or upgrading the distribution never
@@ -358,7 +358,7 @@ ADR maintenance is evaluated at these integration points:
 | Agent workflow boundary | After a successful ADR lifecycle/storage apply and before a Governed handoff | The repository workflow runs `adr-maintenance` and carries unresolved typed actions into the handoff. |
 | Scheduled CI | An external scheduler runs `adr-maintenance --check` | Exits `1` only for `action_required`; `review_due` remains non-blocking. |
 
-RepoFoundry ships the evaluator and workflow rules, not a resident daemon or a
+RepoHarnessKit ships the evaluator and workflow rules, not a resident daemon or a
 wall-clock cadence. Teams that want daily or weekly checks configure their existing
 CI scheduler to invoke `adr-maintenance --check`; the scheduler must not duplicate
 the thresholds or perform an ADR mutation automatically.
@@ -611,7 +611,7 @@ creates missing paths and preserves repository-owned files. An agent
 instruction file registered by an adapter must stay within that adapter's line
 budget. Codex `AGENTS.md` remains capped at 100 physical lines.
 
-RepoFoundry `0.15.4` uses Harness schema `3`, Harness Core `1.6.2`, Codex
+The last published RepoHarnessKit `v0.15.4` distribution uses Harness schema `3`, Harness Core `1.6.2`, Codex
 adapter `2.4.4`, Claude adapter `1.3.3`, Portable adapter `1.3.4`, and
 activation protocol `2`.
 Those versions evolve independently from the Engineering Specs Catalog.
@@ -808,10 +808,10 @@ Professional capabilities:
 Decision and implementation:
 
 - [ADR-007 — Adopt RepoFoundry](./docs/adr/adr-007_repo-foundry-identity.md)
-- [ADR-008 — Use RepoHarnessKit externally](./docs/adr/adr-008_repofoundry-ai-brand.md)
-- [ADR-009 — Align the root Skill name with RepoHarnessKit](./docs/adr/adr-009_align-repofoundry-ai-skill-name.md)
+- [ADR-008 — Historical RepoFoundry AI brand decision](./docs/adr/adr-008_repofoundry-ai-brand.md)
+- [ADR-009 — Historical repo-foundry-ai Skill naming](./docs/adr/adr-009_align-repofoundry-ai-skill-name.md)
 - [ADR-011 — Separate Core from Agent adapters](./docs/adr/adr-011_agent-neutral-harness-adapters.md)
 - [ADR-012 — Separate Spec activation from runtime adapters](./docs/adr/adr-012_agent-neutral-spec-activation.md)
 - [ADR-014 — Governed artifact metadata contract (proposed)](./docs/adr/adr-014_governed-artifact-metadata-contract.md)
-- [EP-006 — Migrate to RepoHarnessKit](./docs/exec-plans/active/ep-006_migrate-to-repo-foundry/EXECPLAN.md)
+- [EP-006 — Historical RepoFoundry migration](./docs/exec-plans/active/ep-006_migrate-to-repo-foundry/EXECPLAN.md)
 - [EP-010 — Implement Agent-neutral adapters](./docs/exec-plans/completed/ep-010_implement-agent-neutral-adapters/EXECPLAN.md)
