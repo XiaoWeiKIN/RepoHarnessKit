@@ -1,0 +1,168 @@
+name: publish-distribution-release
+
+# This is the release publisher for RepoHarnessKit distribution updates.
+# PRs validate only. Merged VERSION changes may publish, after all gates pass.
+on:
+  pull_request:
+    paths:
+      - VERSION
+      - release.json
+      - docs/releases/**
+      - .github/workflows/publish-distribution-release.yml
+  push:
+    branches: [main]
+    paths: [VERSION]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repoharnesskit-distribution-release
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: release integrity (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.14']
+    env:
+      RF_RELEASE_BASE: ${{ github.event.pull_request.base.sha || github.event.before || github.sha }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Verify versioned templates, old-release upgrades and all contracts
+        run: python3 -B scripts/check.py
+
+  frames:
+    name: release presentation models (Node 22)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - run: node --test tests/explanation_frames.test.mjs
+
+  publish:
+    name: publish verified version
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'XiaoWeiKIN/RepoHarnessKit'
+    needs: [verify, frames]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GIT_COMMITTER_NAME: github-actions[bot]
+      GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Check exact merged release candidate and preflight install
+        id: candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --quiet origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          version="$(cat VERSION)"
+          [[ "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
+          previous="$(git show HEAD^:VERSION)"
+          test "$previous" != "$version"
+          python3 - "$previous" "$version" <<'PY'
+          import json, sys
+          before = tuple(map(int, sys.argv[1].split('.')))
+          after = tuple(map(int, sys.argv[2].split('.')))
+          assert after > before, "Release version must strictly increase"
+          assert json.load(open('release.json', encoding='utf-8'))['distribution'] == sys.argv[2]
+          PY
+          test -s "docs/releases/$version.md"
+          python3 -B scripts/check_release.py --base-ref HEAD^
+          python3 -B install.py --source . --version "$version" --host none \
+            --prefix "$RUNNER_TEMP/preview-install" \
+            --bin-dir "$RUNNER_TEMP/preview-bin" \
+            --json > "$RUNNER_TEMP/preview.json"
+          python3 - "$RUNNER_TEMP/preview.json" "$version" <<'PY'
+          import json, sys
+          result = json.load(open(sys.argv[1], encoding='utf-8'))
+          assert result['version'] == sys.argv[2]
+          assert result['project_harnesses_modified'] is False
+          PY
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Publish immutable-version tag and GitHub Release
+        env:
+          VERSION: ${{ steps.candidate.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="v$VERSION"
+          ref="refs/tags/$tag"
+          remote="$(git ls-remote --tags origin "$ref" "$ref^{}")"
+          object="$(printf '%s\n' "$remote" | awk -v r="$ref" '$2==r {print $1}')"
+          peeled="$(printf '%s\n' "$remote" | awk -v r="$ref^{}" '$2==r {print $1}')"
+          if [ -n "$object" ]; then
+            test "$peeled" = "$GITHUB_SHA" || {
+              echo "Existing tag is not annotated at this exact release commit" >&2
+              exit 1
+            }
+          else
+            git -c user.name='github-actions[bot]' \
+                -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              tag -a "$tag" "$GITHUB_SHA" -m "RepoHarnessKit $VERSION"
+            git -c push.followTags=false push origin "$ref:$ref"
+          fi
+          remote="$(git ls-remote --tags origin "$ref" "$ref^{}")"
+          peeled="$(printf '%s\n' "$remote" | awk -v r="$ref^{}" '$2==r {print $1}')"
+          test "$peeled" = "$GITHUB_SHA"
+          if gh release view "$tag" --json tagName,name,isDraft,isPrerelease \
+               > "$RUNNER_TEMP/release-existing.json" 2>/dev/null; then
+            python3 - "$RUNNER_TEMP/release-existing.json" "$tag" <<'PY'
+          import json, sys
+          data = json.load(open(sys.argv[1], encoding='utf-8'))
+          assert data['tagName'] == sys.argv[2]
+          assert data['name'] == 'RepoHarnessKit ' + sys.argv[2]
+          assert data['isDraft'] is False and data['isPrerelease'] is False
+          PY
+          else
+            gh release create "$tag" --verify-tag \
+              --title "RepoHarnessKit $tag" \
+              --notes-file "docs/releases/$VERSION.md"
+          fi
+
+      - name: Validate the published GitHub Release installer
+        env:
+          VERSION: ${{ steps.candidate.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -B install.py --version "$VERSION" \
+            --repository XiaoWeiKIN/RepoHarnessKit --host none \
+            --prefix "$RUNNER_TEMP/release-install" \
+            --bin-dir "$RUNNER_TEMP/release-bin" \
+            --json > "$RUNNER_TEMP/published.json"
+          python3 - "$RUNNER_TEMP/published.json" "$VERSION" <<'PY'
+          import json, sys
+          result = json.load(open(sys.argv[1], encoding='utf-8'))
+          assert result['version'] == sys.argv[2]
+          assert result['source']['kind'] == 'github-release'
+          assert result['project_harnesses_modified'] is False
+          PY
+          echo "Verified RepoHarnessKit v$VERSION release tag, GitHub Release and isolated installer" >> "$GITHUB_STEP_SUMMARY"

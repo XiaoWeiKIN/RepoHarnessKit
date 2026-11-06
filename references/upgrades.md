@@ -8,9 +8,9 @@ migration。schema 迁移必须走 upgrade；schema 3 中追加 adapter 时，bo
 
 ```bash
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.3
+  upgrade --to 0.15.4
 python3 <repo-foundry-ai-dir>/scripts/foundryctl.py --repo . \
-  upgrade --to 0.15.3 --apply
+  upgrade --to 0.15.4 --apply
 ```
 
 必须先展示 dry-run 结果。只有用户已要求实施升级且计划无 conflict 时才使用
@@ -71,3 +71,15 @@ Governed 交接前运行检查，外部定时 CI 使用同一命令的 `--check`
 决策复杂度、View/Plan 上下文和终态物理归档，输出 typed preview action；它不会
 自动 retire、supersede、合并、打包或执行任何 apply。数值越过 review/action 边界才
 升级状态，三个及以上可机械验证的 strict 终态 live ADR 独立触发 `pack_history`。
+
+## 0.15.4 distribution and Skill naming
+
+The distribution version advances to 0.15.4 without changing Core 1.6.2 or
+adapter template versions. It adds the independently discoverable
+`architecture-design` capability and renames the document and governed-design
+Skills to `design-documentation` and `governed-design`, respectively.
+Existing schema-3 manifest component identities and locked Spec selections
+remain unchanged. Historical pinned releases keep their original Skill paths;
+the installer verifies a complete historical or modern layout, not a mix.
+Preview and validate project upgrades; user-owned and modified generated files
+must not be silently overwritten.
